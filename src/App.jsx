@@ -205,11 +205,45 @@ function AdminLogin({ onLogin }) {
     }
   }
 
+  async function forgotPassword() {
+    if (!supabase) {
+      setStatus("Supabase connection is not configured.");
+      return;
+    }
+
+    if (!email.trim()) {
+      setStatus("Please enter your admin email first.");
+      return;
+    }
+
+    setLoading(true);
+    setStatus("");
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        {
+          redirectTo: window.location.origin
+        }
+      );
+
+      if (error) throw error;
+
+      setStatus("Password reset link sent! Check your email.");
+    } catch (error) {
+      setStatus(error.message || "Could not send reset email.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="detail-page">
       <p className="eyebrow">PRIVATE ACCESS</p>
       <h1>Admin<span>.</span></h1>
-      <p className="detail-lead">Sign in to manage your personal website.</p>
+      <p className="detail-lead">
+        Sign in to manage your personal website.
+      </p>
 
       <form className="contact-form" onSubmit={submit}>
         <label>
@@ -234,8 +268,17 @@ function AdminLogin({ onLogin }) {
           />
         </label>
 
+        <button
+          type="button"
+          onClick={forgotPassword}
+          disabled={loading}
+          className="forgot-password"
+        >
+          Forgot Password?
+        </button>
+
         <button className="submit-button" disabled={loading}>
-          {loading ? "VERIFYING..." : "SIGN IN"}
+          {loading ? "PLEASE WAIT..." : "SIGN IN"}
           <Arrow diagonal />
         </button>
 
