@@ -260,28 +260,156 @@ function AdminDashboard({ onLogout }) {
     </main>
   );
 }
+
 export default function App() {
-  const [page, setPage] = useState(() => window.location.hash.replace("#", "") || "home");
+  const [page, setPage] = useState(
+    () => window.location.hash.replace("#", "") || "home"
+  );
+
+  const [adminSession, setAdminSession] = useState(null);
+  const [adminAuthorized, setAdminAuthorized] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(false);
+
   function navigate(next) {
     setPage(next);
-    if (next === "home") history.pushState(null, "", window.location.pathname);
-    else history.pushState(null, "", `#${next}`);
+
+    if (next === "home") {
+      history.pushState(null, "", window.location.pathname);
+    } else {
+      history.pushState(null, "", `#${next}`);
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
   useEffect(() => {
-    const onPop = () => { setPage(window.location.hash.replace("#", "") || "home"); window.scrollTo(0,0); };
+    if (!supabase) {
+      setAdminChecked(true);
+      return;
+    }
+
+    let active = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) setAdminSession(data.session);
+    });
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAdminSession(session);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function verifyOwner() {
+      if (!adminSession || !supabase) {
+        setAdminAuthorized(false);
+        setAdminChecked(true);
+        return;
+      }
+
+      setAdminChecked(false);
+
+      const { data, error } = await supabase.rpc("is_site_owner");
+
+      if (!active) return;
+
+      if (error || data !== true) {
+        setAdminAuthorized(false);
+        await supabase.auth.signOut();
+      } else {
+        setAdminAuthorized(true);
+      }
+
+      setAdminChecked(true);
+    }
+
+    verifyOwner();
+
+    return () => {
+      active = false;
+    };
+  }, [adminSession]);
+
+  useEffect(() => {
+    const onPop = () => {
+      setPage(window.location.hash.replace("#", "") || "home");
+      window.scrollTo(0, 0);
+    };
+
     window.addEventListener("popstate", onPop);
+
     return () => window.removeEventListener("popstate", onPop);
   }, []);
-  useEffect(() => { document.title = page === "home" ? "AL MUBIN — Personal Digital World" : `${page[0].toUpperCase()+page.slice(1)} — AL MUBIN`; }, [page]);
-  return <>
-    <Header active={page} navigate={navigate}/>
-    {page === "home" ? <Home navigate={navigate}/> : <DetailPage page={page} navigate={navigate}/>}
-    <footer className="site-footer">
-      <a className="footer-mark" href="#" onClick={(e) => {e.preventDefault();navigate("home");}}>AM<span>.</span></a>
-      <span>© {new Date().getFullYear()} AL MUBIN</span>
-      <span>MADE OF MOMENTS & MEANING.</span>
-      <button onClick={() => window.scrollTo({top:0,behavior:"smooth"})}>BACK TO TOP ↑</button>
-    </footer>
-  </>;
+
+  useEffect(() => {
+    document.title =
+      page === "home"
+        ? "AL MUBIN — Personal Digital World"
+        : page === "admin"
+        ? "Admin — AL MUBIN"
+        : `${page[0].toUpperCase() + page.slice(1)} — AL MUBIN`;
+  }, [page]);
+
+  async function logout() {
+    await supabase.auth.signOut();
+    setAdminSession(null);
+    setAdminAuthorized(false);
+    navigate("admin");
+  }
+
+  return (
+    <>
+      <Header active={page} navigate={navigate} />
+
+      {page === "admin" ? (
+        !adminChecked ? (
+          <main className="detail-page">
+            <p className="eyebrow">SECURE ACCESS</p>
+            <h1>Verifying<span>.</span></h1>
+          </main>
+        ) : adminAuthorized && adminSession ? (
+          <AdminDashboard onLogout={logout} />
+        ) : (
+          <AdminLogin onLogin={setAdminSession} />
+        )
+      ) : page === "home" ? (
+        <Home navigate={navigate} />
+      ) : (
+        <DetailPage page={page} navigate={navigate} />
+      )}
+
+      <footer className="site-footer">
+        <a
+          className="footer-mark"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("home");
+          }}
+        >
+          AM<span>.</span>
+        </a>
+
+        <span>© {new Date().getFullYear()} AL MUBIN</span>
+        <span>MADE OF MOMENTS & MEANING.</span>
+
+        <button
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          }
+        >
+          BACK TO TOP ↑
+        </button>
+      </footer>
+    </>
+  );
 }
