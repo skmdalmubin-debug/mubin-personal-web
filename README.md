@@ -1,18 +1,26 @@
-# Mubin Personal Web
+# AL MUBIN — Personal Digital World
 
-A React + Vite personal website starter designed for Netlify and Supabase.
+A responsive black-and-white personal website built with React + Vite.
 
 ## Run locally
 1. Install Node.js.
 2. Run `npm install`.
-3. Copy `.env.example` to `.env` and add your Supabase project URL and anon/publishable key.
-4. Run `npm run dev`.
+3. Run `npm run dev`.
 
 ## Deploy to Netlify
-Connect this GitHub repository to Netlify. Build command: `npm run build`; publish directory: `dist`.
+Build command: `npm run build`
+Publish directory: `dist`
 
-Add these Netlify environment variables:
+The included `netlify.toml` handles single-page navigation.
+
+## Supabase
+Add these environment variables in Netlify:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 
-Never put a Supabase service_role key in frontend code or Netlify's public build environment.
+Only use the Supabase anon/publishable key in frontend variables. Never use a `service_role` key in a website.
+
+The contact form inserts into the existing `contact_messages` table using `name`, `email`, and `message` fields. If your table uses different field names, update the insert in `src/App.jsx`.
+
+## Content
+The homepage sections and preview content are in `src/App.jsx`. Replace the sample photos with your own photos when ready.
