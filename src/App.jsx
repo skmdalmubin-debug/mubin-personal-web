@@ -421,7 +421,9 @@ export default function App() {
     <>
       <Header active={page} navigate={navigate} />
 
-      {page === "admin" ? (
+   {page === "reset-password" ? (
+  <ResetPassword onDone={() => navigate("admin")} />
+) : page === "admin" ? (
         !adminChecked ? (
           <main className="detail-page">
             <p className="eyebrow">SECURE ACCESS</p>
