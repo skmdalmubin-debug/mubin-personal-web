@@ -112,3 +112,22 @@
   }
 }
 
+.forgot-password {
+  display: block;
+  width: fit-content;
+  margin: -12px 0 20px auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #777;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.forgot-password:hover {
+  color: #000;
+}
+
