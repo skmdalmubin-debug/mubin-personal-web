@@ -205,7 +205,7 @@ function AdminLogin({ onLogin }) {
     }
   }
 
-  async function forgotPassword() {
+  async function forgotPassword() { alert("Forgot Password button clicked!");
     if (!supabase) {
       setStatus("Supabase connection is not configured.");
       return;
