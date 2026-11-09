@@ -47,20 +47,40 @@ function SectionPreview({ item, index, navigate }) {
 function Home({ navigate }) {
   return <main id="home">
     <section className="hero">
-      <div className="hero-topline"><span>INDEPENDENTLY CURATED</span><span>DHAKA, BANGLADESH</span></div>
-      <div className="hero-title-wrap">
-        <p className="eyebrow">WELCOME TO MY WORLD</p>
-        <h1>AL MUBIN<span>.</span></h1>
-        <div className="hero-bottom">
-          <p>A collection of places, passions, memories<br className="desktop-break" /> and moments that shape my journey.</p>
-          <a className="circle-link" href="#about" aria-label="Scroll to discover"><span>SCROLL<br/>TO EXPLORE</span><b>↓</b></a>
+      <div className="hero-topline">
+        <span>INDEPENDENTLY CURATED</span>
+        <span>DHAKA, BANGLADESH</span>
+      </div>
+
+      <div className="hero-image">
+        <img
+          src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90"
+          alt="Quiet landscape at sunrise"
+        />
+
+        <div className="hero-title-wrap">
+          <p className="eyebrow">WELCOME TO MY WORLD</p>
+          <h1>AL MUBIN<span>.</span></h1>
+
+          <div className="hero-bottom">
+            <p>
+              A collection of places, passions, memories<br className="desktop-break" />
+              and moments that shape my journey.
+            </p>
+            <a className="circle-link" href="#about" aria-label="Scroll to discover">
+              <span>SCROLL<br />TO EXPLORE</span>
+              <b>↓</b>
+            </a>
+          </div>
+        </div>
+
+        <div className="hero-image-caption">
+          <span>01 — A WORLD IN PROGRESS</span>
+          <span>SCROLL TO DISCOVER</span>
         </div>
       </div>
-      <div className="hero-image">
-        <img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90" alt="Quiet landscape at sunrise" />
-        <div className="hero-image-caption"><span>01 — A WORLD IN PROGRESS</span><span>SCROLL TO DISCOVER</span></div>
-      </div>
     </section>
+
     <section className="intro section-pad">
       <p className="eyebrow">A PERSONAL ARCHIVE</p>
       <div className="intro-grid">
@@ -68,11 +88,24 @@ function Home({ navigate }) {
         <p>This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around.</p>
       </div>
     </section>
-    <div className="section-heading section-pad"><span>EXPLORE MY WORLD</span><span>SCROLL TO DISCOVER ↓</span></div>
-    {sections.map((item, index) => <SectionPreview key={item.id} item={item} index={index} navigate={navigate} />)}
+
+    <div className="section-heading section-pad">
+      <span>EXPLORE MY WORLD</span>
+      <span>SCROLL TO DISCOVER ↓</span>
+    </div>
+
+    {sections.map((item, index) => (
+      <SectionPreview key={item.id} item={item} index={index} navigate={navigate} />
+    ))}
+
     <section className="contact-band section-pad" id="contact">
       <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
-      <div className="contact-row"><h2>Let's connect<span>.</span></h2><button className="round-arrow" onClick={() => navigate("contact")} aria-label="Open contact page"><Arrow diagonal /></button></div>
+      <div className="contact-row">
+        <h2>Let's connect<span>.</span></h2>
+        <button className="round-arrow" onClick={() => navigate("contact")} aria-label="Open contact page">
+          <Arrow diagonal />
+        </button>
+      </div>
       <p className="contact-small">For conversations, collaborations or simply saying hello.</p>
     </section>
   </main>;
