@@ -260,7 +260,55 @@ function AdminDashboard({ onLogout }) {
     </main>
   );
 }
+function ResetPassword({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  async function submit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setStatus("");
+
+    const { error } = await supabase.auth.updateUser({
+      password
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+
+    setStatus("Password updated successfully!");
+    onDone();
+  }
+
+  return (
+    <main className="detail-page">
+      <p className="eyebrow">SECURE ACCESS</p>
+      <h1>New Password<span>.</span></h1>
+      <form className="contact-form" onSubmit={submit}>
+        <label>
+          New Password
+          <input
+            type="password"
+            minLength={8}
+            required
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Enter new password"
+          />
+        </label>
+        <button className="submit-button" disabled={loading}>
+          {loading ? "UPDATING..." : "UPDATE PASSWORD"}
+        </button>
+        {status && <p className="form-status">{status}</p>}
+      </form>
+    </main>
+  );
+}
 export default function App() {
   const [page, setPage] = useState(
     () => window.location.hash.replace("#", "") || "home"
@@ -295,10 +343,13 @@ export default function App() {
     });
 
     const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAdminSession(session);
-    });
+      data: { supabase.auth.onAuthStateChange((event, session) => {
+  setAdminSession(session);
+
+  if (event === "PASSWORD_RECOVERY") {
+    setPage("reset-password");
+  }
+});
 
     return () => {
       active = false;
