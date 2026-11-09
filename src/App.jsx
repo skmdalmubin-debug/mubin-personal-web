@@ -162,7 +162,104 @@ function ContactPage({ navigate }) {
     </form>
   </main>;
 }
+function AdminLogin({ onLogin }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  async function submit(e) {
+    e.preventDefault();
+
+    if (!supabase) {
+      setStatus("Supabase connection is not configured.");
+      return;
+    }
+
+    setLoading(true);
+    setStatus("");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      const { data: isOwner, error: ownerError } =
+        await supabase.rpc("is_site_owner");
+
+      if (ownerError) throw ownerError;
+
+      if (!isOwner) {
+        await supabase.auth.signOut();
+        throw new Error("You are not authorized to access this dashboard.");
+      }
+
+      onLogin(data.session);
+    } catch (error) {
+      setStatus(error.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="detail-page">
+      <p className="eyebrow">PRIVATE ACCESS</p>
+      <h1>Admin<span>.</span></h1>
+      <p className="detail-lead">Sign in to manage your personal website.</p>
+
+      <form className="contact-form" onSubmit={submit}>
+        <label>
+          Email address
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="Your admin email"
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Your password"
+          />
+        </label>
+
+        <button className="submit-button" disabled={loading}>
+          {loading ? "VERIFYING..." : "SIGN IN"}
+          <Arrow diagonal />
+        </button>
+
+        {status && <p className="form-status">{status}</p>}
+      </form>
+    </main>
+  );
+}
+
+function AdminDashboard({ onLogout }) {
+  return (
+    <main className="detail-page">
+      <p className="eyebrow">PRIVATE ADMINISTRATION</p>
+      <h1>Dashboard<span>.</span></h1>
+      <p className="detail-lead">
+        Welcome. Your website management space is ready.
+      </p>
+
+      <button className="submit-button" onClick={onLogout}>
+        SIGN OUT <Arrow diagonal />
+      </button>
+    </main>
+  );
+}
 export default function App() {
   const [page, setPage] = useState(() => window.location.hash.replace("#", "") || "home");
   function navigate(next) {
