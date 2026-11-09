@@ -343,7 +343,7 @@ export default function App() {
     });
 
     const {
-      data: { supabase.auth.onAuthStateChange((event, session) => {
+      data } = supabase.auth.onAuthStateChange((event, session) => {
   setAdminSession(session);
 
   if (event === "PASSWORD_RECOVERY") {
