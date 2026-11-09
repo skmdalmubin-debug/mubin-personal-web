@@ -217,7 +217,7 @@ function AdminLogin({ onLogin }) {
     }
 
     setLoading(true);
-    setStatus("");
+    setStatus("Sending reset email...");
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(
