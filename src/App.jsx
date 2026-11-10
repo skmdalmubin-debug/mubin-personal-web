@@ -960,77 +960,289 @@ const [homeMessage, setHomeMessage] = useState("");
           </section>
         )}
 
+
 {activeTab === "Home Page Editor" && (
   <section className="cms-content">
     <div className="cms-editor-heading">
       <div>
         <p className="cms-eyebrow">HOMEPAGE MANAGEMENT</p>
         <h2>Edit your homepage.</h2>
-        <p>Manage your hero and introduction section.</p>
+        <p>Customise every element of your hero section.</p>
       </div>
     </div>
 
     <div className="cms-edit-panel">
       <div className="cms-list-heading">
-        <strong>Hero Section</strong>
+        <strong>Hero Background</strong>
         <span>01</span>
       </div>
 
       <label className="cms-field">
-        Hero Title
-        <input
-          value={homeSettings.hero_title}
-          onChange={(e) =>
-            setHomeSettings((prev) => ({
-              ...prev,
-              hero_title: e.target.value
-            }))
-          }
-        />
-      </label>
-
-      <label className="cms-field">
-        Hero Subtitle
-        <textarea
-          rows={3}
-          value={homeSettings.hero_subtitle}
-          onChange={(e) =>
-            setHomeSettings((prev) => ({
-              ...prev,
-              hero_subtitle: e.target.value
-            }))
-          }
-        />
-      </label>
-
-      <label className="cms-field">
         Hero Image URL
         <input
-          value={homeSettings.hero_image}
+          value={homeSettings.hero_image ?? ""}
           onChange={(e) =>
-            setHomeSettings((prev) => ({
-              ...prev,
-              hero_image: e.target.value
-            }))
+            updateHomeSetting("hero_image", e.target.value)
+          }
+        />
+      </label>
+
+      <div className="cms-list-heading">
+        <strong>Welcome Text</strong>
+        <span>02</span>
+      </div>
+
+      <label className="cms-field">
+        Text
+        <input
+          value={homeSettings.hero_eyebrow ?? ""}
+          onChange={(e) =>
+            updateHomeSetting("hero_eyebrow", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Font
+        <select
+          value={homeSettings.eyebrow_font ?? "DM Sans"}
+          onChange={(e) =>
+            updateHomeSetting("eyebrow_font", e.target.value)
+          }
+        >
+          <option>DM Sans</option>
+          <option>Manrope</option>
+          <option>Arial</option>
+          <option>Georgia</option>
+          <option>Playfair Display</option>
+        </select>
+      </label>
+
+      <label className="cms-field">
+        Font Size: {homeSettings.eyebrow_size ?? 14}px
+        <input
+          type="range"
+          min="10"
+          max="60"
+          value={homeSettings.eyebrow_size ?? 14}
+          onChange={(e) =>
+            updateHomeSetting("eyebrow_size", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Text Colour
+        <input
+          type="color"
+          value={homeSettings.eyebrow_color ?? "#ffffff"}
+          onChange={(e) =>
+            updateHomeSetting("eyebrow_color", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Horizontal Position: {homeSettings.eyebrow_x ?? 8}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={homeSettings.eyebrow_x ?? 8}
+          onChange={(e) =>
+            updateHomeSetting("eyebrow_x", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Vertical Position: {homeSettings.eyebrow_y ?? 30}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={homeSettings.eyebrow_y ?? 30}
+          onChange={(e) =>
+            updateHomeSetting("eyebrow_y", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <div className="cms-list-heading">
+        <strong>AL MUBIN Title</strong>
+        <span>03</span>
+      </div>
+
+      <label className="cms-field">
+        Title
+        <input
+          value={homeSettings.hero_title ?? ""}
+          onChange={(e) =>
+            updateHomeSetting("hero_title", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Font
+        <select
+          value={homeSettings.title_font ?? "Manrope"}
+          onChange={(e) =>
+            updateHomeSetting("title_font", e.target.value)
+          }
+        >
+          <option>Manrope</option>
+          <option>DM Sans</option>
+          <option>Arial</option>
+          <option>Georgia</option>
+          <option>Playfair Display</option>
+        </select>
+      </label>
+
+      <label className="cms-field">
+        Font Size: {homeSettings.title_size ?? 150}px
+        <input
+          type="range"
+          min="40"
+          max="210"
+          value={homeSettings.title_size ?? 150}
+          onChange={(e) =>
+            updateHomeSetting("title_size", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Text Colour
+        <input
+          type="color"
+          value={homeSettings.title_color ?? "#ffffff"}
+          onChange={(e) =>
+            updateHomeSetting("title_color", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Horizontal Position: {homeSettings.title_x ?? 8}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={homeSettings.title_x ?? 8}
+          onChange={(e) =>
+            updateHomeSetting("title_x", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Vertical Position: {homeSettings.title_y ?? 45}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={homeSettings.title_y ?? 45}
+          onChange={(e) =>
+            updateHomeSetting("title_y", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <div className="cms-list-heading">
+        <strong>SIUUU Subtitle</strong>
+        <span>04</span>
+      </div>
+
+      <label className="cms-field">
+        Subtitle
+        <textarea
+          rows={3}
+          value={homeSettings.hero_subtitle ?? ""}
+          onChange={(e) =>
+            updateHomeSetting("hero_subtitle", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Font
+        <select
+          value={homeSettings.subtitle_font ?? "DM Sans"}
+          onChange={(e) =>
+            updateHomeSetting("subtitle_font", e.target.value)
+          }
+        >
+          <option>DM Sans</option>
+          <option>Manrope</option>
+          <option>Arial</option>
+          <option>Georgia</option>
+          <option>Playfair Display</option>
+        </select>
+      </label>
+
+      <label className="cms-field">
+        Font Size: {homeSettings.subtitle_size ?? 24}px
+        <input
+          type="range"
+          min="10"
+          max="100"
+          value={homeSettings.subtitle_size ?? 24}
+          onChange={(e) =>
+            updateHomeSetting("subtitle_size", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Text Colour
+        <input
+          type="color"
+          value={homeSettings.subtitle_color ?? "#ffffff"}
+          onChange={(e) =>
+            updateHomeSetting("subtitle_color", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Horizontal Position: {homeSettings.subtitle_x ?? 8}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={homeSettings.subtitle_x ?? 8}
+          onChange={(e) =>
+            updateHomeSetting("subtitle_x", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Vertical Position: {homeSettings.subtitle_y ?? 70}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={homeSettings.subtitle_y ?? 70}
+          onChange={(e) =>
+            updateHomeSetting("subtitle_y", Number(e.target.value))
           }
         />
       </label>
 
       <div className="cms-list-heading">
         <strong>Introduction Section</strong>
-        <span>02</span>
+        <span>05</span>
       </div>
 
       <label className="cms-field">
         Intro Heading
         <textarea
-          rows={2}
-          value={homeSettings.intro_heading}
+          rows={3}
+          value={homeSettings.intro_heading ?? ""}
           onChange={(e) =>
-            setHomeSettings((prev) => ({
-              ...prev,
-              intro_heading: e.target.value
-            }))
+            updateHomeSetting("intro_heading", e.target.value)
           }
         />
       </label>
@@ -1039,12 +1251,9 @@ const [homeMessage, setHomeMessage] = useState("");
         Intro Description
         <textarea
           rows={4}
-          value={homeSettings.intro_description}
+          value={homeSettings.intro_description ?? ""}
           onChange={(e) =>
-            setHomeSettings((prev) => ({
-              ...prev,
-              intro_description: e.target.value
-            }))
+            updateHomeSetting("intro_description", e.target.value)
           }
         />
       </label>
@@ -1067,6 +1276,7 @@ const [homeMessage, setHomeMessage] = useState("");
     </div>
   </section>
 )}
+
 
 {!["Overview", "Page Editor", "Home Page Editor"].includes(activeTab) && (
   <section className="cms-content">
