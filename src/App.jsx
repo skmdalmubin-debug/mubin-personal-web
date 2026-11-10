@@ -77,7 +77,37 @@ function Home({ navigate }) {
     intro_description:
       "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
   });
+  const [homeDevice, setHomeDevice] = useState("desktop");
 
+  useEffect(() => {
+    const detectDevice = () => {
+      const width = window.innerWidth;
+
+      if (width <= 600) {
+        setHomeDevice("mobile");
+      } else if (width <= 1200) {
+        setHomeDevice("ipad");
+      } else {
+        setHomeDevice("desktop");
+      }
+    };
+
+    detectDevice();
+
+    window.addEventListener("resize", detectDevice);
+
+    return () => {
+      window.removeEventListener("resize", detectDevice);
+    };
+  }, []);
+
+  const getDeviceSetting = (key, fallback) => {
+    return (
+      settings[`${homeDevice}_${key}`] ??
+      settings[key] ??
+      fallback
+    );
+  };
   useEffect(() => {
     let active = true;
 
@@ -108,10 +138,7 @@ function Home({ navigate }) {
   return (
     <main id="home">
       <section className="hero">
-        <div className="hero-topline">
-          <span>INDEPENDENTLY CURATED</span>
-          <span>DHAKA, BANGLADESH</span>
-        </div>
+
 
         <div className="hero-image">
           <img
@@ -123,42 +150,46 @@ function Home({ navigate }) {
             <p
               className="eyebrow"
               style={{
-                fontFamily: settings.eyebrow_font ?? "DM Sans",
-                fontSize: `${settings.eyebrow_size ?? 14}px`,
-                color: settings.eyebrow_color ?? "#ffffff",
+                fontFamily: getDeviceSetting("eyebrow_font", "DM Sans"),
+                fontSize: `${getDeviceSetting("eyebrow_size", 14)}px`,
+                color: getDeviceSetting("eyebrow_color", "#ffffff"),
                 position: "absolute",
-                left: `${settings.eyebrow_x ?? 8}%`,
-                top: `${settings.eyebrow_y ?? 30}%`
+                left: `${getDeviceSetting("eyebrow_x", 8)}%`,
+                top: `${getDeviceSetting("eyebrow_y", 30)}%`
               }}
             >
               {settings.hero_eyebrow ?? "WELCOME TO THE WORLD"}
             </p>
 
+
             <h1
               style={{
-                fontFamily: settings.title_font ?? "Manrope",
-                fontSize: `clamp(60px, ${settings.title_size ?? 150}px, 210px)`,
-                color: settings.title_color ?? "#ffffff",
+                fontFamily: getDeviceSetting("title_font", "Manrope"),
+                fontSize: `clamp(60px, ${getDeviceSetting("title_size", 150)}px, 210px)`,
+                color: getDeviceSetting("title_color", "#ffffff"),
                 position: "absolute",
-                left: `${settings.title_x ?? 8}%`,
-                top: `${settings.title_y ?? 45}%`
+                left: `${getDeviceSetting("title_x", 8)}%`,
+                top: `${getDeviceSetting("title_y", 45)}%`
               }}
             >
+
               {settings.hero_title}
              
             </h1>
 
+
             <p
               style={{
                 whiteSpace: "pre-line",
-                fontFamily: settings.subtitle_font ?? "DM Sans",
-                fontSize: `${settings.subtitle_size ?? 24}px`,
-                color: settings.subtitle_color ?? "#ffffff",
+                fontFamily: getDeviceSetting("subtitle_font", "DM Sans"),
+                fontSize: `${getDeviceSetting("subtitle_size", 24)}px`,
+                color: getDeviceSetting("subtitle_color", "#ffffff"),
                 position: "absolute",
-                left: `${settings.subtitle_x ?? 8}%`,
-                top: `${settings.subtitle_y ?? 70}%`
+                left: `${getDeviceSetting("subtitle_x", 8)}%`,
+                top: `${getDeviceSetting("subtitle_y", 70)}%`
               }}
             >
+
               {settings.hero_subtitle ?? "SIUUU"}
             </p>
           </div>
@@ -553,12 +584,50 @@ const [homeSettings, setHomeSettings] = useState({
   intro_description:
     "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
 });
-  const updateHomeSetting = (key, value) => {
+
+
+const [homeEditorDevice, setHomeEditorDevice] = useState("desktop");
+
+  
+
+const deviceSpecificHomeSettings = [
+  "eyebrow_size",
+  "eyebrow_color",
+  "eyebrow_font",
+  "eyebrow_x",
+  "eyebrow_y",
+  "title_size",
+  "title_color",
+  "title_font",
+  "title_x",
+  "title_y",
+  "subtitle_size",
+  "subtitle_color",
+  "subtitle_font",
+  "subtitle_x",
+  "subtitle_y"
+];
+
+const updateHomeSetting = (key, value) => {
+  const deviceSpecific = deviceSpecificHomeSettings.includes(key);
+  const settingKey = deviceSpecific
+    ? `${homeEditorDevice}_${key}`
+    : key;
+
   setHomeSettings((prev) => ({
     ...prev,
-    [key]: value
+    [settingKey]: value
   }));
 };
+
+const getHomeSetting = (key, fallback) => {
+  return (
+    homeSettings[`${homeEditorDevice}_${key}`] ??
+    homeSettings[key] ??
+    fallback
+  );
+};
+
 
 const [homeLoading, setHomeLoading] = useState(false);
 const [homeSaving, setHomeSaving] = useState(false);
@@ -971,22 +1040,36 @@ const [homeMessage, setHomeMessage] = useState("");
       </div>
     </div>
 
+    <div className="home-device-tabs">
+      <button
+        className={homeEditorDevice === "desktop" ? "active" : ""}
+        onClick={() => setHomeEditorDevice("desktop")}
+      >
+        Desktop
+      </button>
+
+      <button
+        className={homeEditorDevice === "ipad" ? "active" : ""}
+        onClick={() => setHomeEditorDevice("ipad")}
+      >
+        iPad
+      </button>
+
+      <button
+        className={homeEditorDevice === "mobile" ? "active" : ""}
+        onClick={() => setHomeEditorDevice("mobile")}
+      >
+        Mobile
+      </button>
+    </div>
+
     <div className="cms-edit-panel">
       <div className="cms-list-heading">
         <strong>Hero Background</strong>
         <span>01</span>
       </div>
 
-      <label className="cms-field">
-        Hero Image URL
-        <input
-          value={homeSettings.hero_image ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("hero_image", e.target.value)
-          }
-        />
-      </label>
-
+      
       <div className="cms-list-heading">
         <strong>Welcome Text</strong>
         <span>02</span>
@@ -1005,7 +1088,7 @@ const [homeMessage, setHomeMessage] = useState("");
       <label className="cms-field">
         Font
         <select
-          value={homeSettings.eyebrow_font ?? "DM Sans"}
+          value={getHomeSetting("eyebrow_font", "DM Sans")}
           onChange={(e) =>
             updateHomeSetting("eyebrow_font", e.target.value)
           }
@@ -1019,12 +1102,12 @@ const [homeMessage, setHomeMessage] = useState("");
       </label>
 
       <label className="cms-field">
-        Font Size: {homeSettings.eyebrow_size ?? 14}px
+        Font Size: {getHomeSetting("eyebrow_size", 14)}px
         <input
           type="range"
           min="10"
           max="60"
-          value={homeSettings.eyebrow_size ?? 14}
+          value={getHomeSetting("eyebrow_size", 14)}
           onChange={(e) =>
             updateHomeSetting("eyebrow_size", Number(e.target.value))
           }
@@ -1035,7 +1118,7 @@ const [homeMessage, setHomeMessage] = useState("");
         Text Colour
         <input
           type="color"
-          value={homeSettings.eyebrow_color ?? "#ffffff"}
+          value={getHomeSetting("eyebrow_color", "#ffffff")}
           onChange={(e) =>
             updateHomeSetting("eyebrow_color", e.target.value)
           }
@@ -1043,12 +1126,12 @@ const [homeMessage, setHomeMessage] = useState("");
       </label>
 
       <label className="cms-field">
-        Horizontal Position: {homeSettings.eyebrow_x ?? 8}%
+        Horizontal Position: {getHomeSetting("eyebrow_x", 8)}%
         <input
           type="range"
           min="0"
           max="90"
-          value={homeSettings.eyebrow_x ?? 8}
+          value={getHomeSetting("eyebrow_x", 8)}
           onChange={(e) =>
             updateHomeSetting("eyebrow_x", Number(e.target.value))
           }
@@ -1056,22 +1139,101 @@ const [homeMessage, setHomeMessage] = useState("");
       </label>
 
       <label className="cms-field">
-        Vertical Position: {homeSettings.eyebrow_y ?? 30}%
+        Vertical Position: {getHomeSetting("eyebrow_y", 30)}%
         <input
           type="range"
           min="0"
           max="90"
-          value={homeSettings.eyebrow_y ?? 30}
+          value={getHomeSetting("eyebrow_y", 30)}
           onChange={(e) =>
             updateHomeSetting("eyebrow_y", Number(e.target.value))
           }
         />
       </label>
 
+
       <div className="cms-list-heading">
         <strong>AL MUBIN Title</strong>
         <span>03</span>
       </div>
+
+      <label className="cms-field">
+        Title
+        <input
+          value={homeSettings.hero_title ?? ""}
+          onChange={(e) =>
+            updateHomeSetting("hero_title", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Font
+        <select
+          value={getHomeSetting("title_font", "Manrope")}
+          onChange={(e) =>
+            updateHomeSetting("title_font", e.target.value)
+          }
+        >
+          <option>Manrope</option>
+          <option>DM Sans</option>
+          <option>Arial</option>
+          <option>Georgia</option>
+          <option>Playfair Display</option>
+        </select>
+      </label>
+
+      <label className="cms-field">
+        Font Size: {getHomeSetting("title_size", 150)}px
+        <input
+          type="range"
+          min="40"
+          max="210"
+          value={getHomeSetting("title_size", 150)}
+          onChange={(e) =>
+            updateHomeSetting("title_size", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Text Colour
+        <input
+          type="color"
+          value={getHomeSetting("title_color", "#ffffff")}
+          onChange={(e) =>
+            updateHomeSetting("title_color", e.target.value)
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Horizontal Position: {getHomeSetting("title_x", 8)}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={getHomeSetting("title_x", 8)}
+          onChange={(e) =>
+            updateHomeSetting("title_x", Number(e.target.value))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Vertical Position: {getHomeSetting("title_y", 45)}%
+        <input
+          type="range"
+          min="0"
+          max="90"
+          value={getHomeSetting("title_y", 45)}
+          onChange={(e) =>
+            updateHomeSetting("title_y", Number(e.target.value))
+          }
+        />
+      </label>
+
+      
 
       <label className="cms-field">
         Title
@@ -1149,6 +1311,7 @@ const [homeMessage, setHomeMessage] = useState("");
         />
       </label>
 
+    
       <div className="cms-list-heading">
         <strong>SIUUU Subtitle</strong>
         <span>04</span>
@@ -1168,7 +1331,7 @@ const [homeMessage, setHomeMessage] = useState("");
       <label className="cms-field">
         Font
         <select
-          value={homeSettings.subtitle_font ?? "DM Sans"}
+          value={getHomeSetting("subtitle_font", "DM Sans")}
           onChange={(e) =>
             updateHomeSetting("subtitle_font", e.target.value)
           }
@@ -1182,12 +1345,12 @@ const [homeMessage, setHomeMessage] = useState("");
       </label>
 
       <label className="cms-field">
-        Font Size: {homeSettings.subtitle_size ?? 24}px
+        Font Size: {getHomeSetting("subtitle_size", 24)}px
         <input
           type="range"
           min="10"
           max="100"
-          value={homeSettings.subtitle_size ?? 24}
+          value={getHomeSetting("subtitle_size", 24)}
           onChange={(e) =>
             updateHomeSetting("subtitle_size", Number(e.target.value))
           }
@@ -1198,7 +1361,7 @@ const [homeMessage, setHomeMessage] = useState("");
         Text Colour
         <input
           type="color"
-          value={homeSettings.subtitle_color ?? "#ffffff"}
+          value={getHomeSetting("subtitle_color", "#ffffff")}
           onChange={(e) =>
             updateHomeSetting("subtitle_color", e.target.value)
           }
@@ -1206,12 +1369,12 @@ const [homeMessage, setHomeMessage] = useState("");
       </label>
 
       <label className="cms-field">
-        Horizontal Position: {homeSettings.subtitle_x ?? 8}%
+        Horizontal Position: {getHomeSetting("subtitle_x", 8)}%
         <input
           type="range"
           min="0"
           max="90"
-          value={homeSettings.subtitle_x ?? 8}
+          value={getHomeSetting("subtitle_x", 8)}
           onChange={(e) =>
             updateHomeSetting("subtitle_x", Number(e.target.value))
           }
@@ -1219,17 +1382,18 @@ const [homeMessage, setHomeMessage] = useState("");
       </label>
 
       <label className="cms-field">
-        Vertical Position: {homeSettings.subtitle_y ?? 70}%
+        Vertical Position: {getHomeSetting("subtitle_y", 70)}%
         <input
           type="range"
           min="0"
           max="90"
-          value={homeSettings.subtitle_y ?? 70}
+          value={getHomeSetting("subtitle_y", 70)}
           onChange={(e) =>
             updateHomeSetting("subtitle_y", Number(e.target.value))
           }
         />
       </label>
+
 
       <div className="cms-list-heading">
         <strong>Introduction Section</strong>
