@@ -136,7 +136,7 @@ function Home({ navigate }) {
   }, []);
 
   return (
-    <main id="home">
+    <main id="home" style={{ fontFamily: settings.global_body_font || "DM Sans", fontSize: `${settings.global_body_size || 14}px`, "--site-heading-font": settings.global_heading_font || "Manrope" }}>
       <section className="hero">
 
 
@@ -165,7 +165,7 @@ function Home({ navigate }) {
             <h1
               style={{
                 fontFamily: getDeviceSetting("title_font", "Manrope"),
-                fontSize: `clamp(60px, ${getDeviceSetting("title_size", 150)}px, 210px)`,
+                fontSize: `clamp(40px, ${getDeviceSetting("title_size", 150)}px, 210px)`,
                 color: getDeviceSetting("title_color", "#ffffff"),
                 position: "absolute",
                 left: `${getDeviceSetting("title_x", 8)}%`,
@@ -174,7 +174,7 @@ function Home({ navigate }) {
             >
 
               {settings.hero_title}
-             
+
             </h1>
 
 
@@ -213,7 +213,7 @@ function Home({ navigate }) {
         <span>SCROLL TO DISCOVER ↓</span>
       </div>
 
-      {sections.map((item, index) => (
+      {(Array.isArray(settings.section_content) ? settings.section_content : sections).map((item, index) => (
         <SectionPreview
           key={item.id}
           item={item}
@@ -223,7 +223,8 @@ function Home({ navigate }) {
       ))}
 
       <section className="contact-band section-pad" id="contact">
-        <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
+
+                <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
 
         <div className="contact-row">
           <h2>
@@ -381,7 +382,7 @@ function DetailPage({ page, navigate }) {
 
 
 
-function ContactPage({ navigate }) {
+function ContactPage({ navigate, contactEmail = "" }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
@@ -403,7 +404,7 @@ function ContactPage({ navigate }) {
     <button className="back-link" onClick={() => navigate("home")}>← BACK TO HOME</button>
     <p className="eyebrow">LET'S START A CONVERSATION</p>
     <h1>Contact<span>.</span></h1>
-    <p className="detail-lead">Have a question, an idea or just want to say hello? Leave a message.</p>
+    <p className="detail-lead">Have a question, an idea or just want to say hello? Leave a message.{contactEmail && <> You can also email <a href={`mailto:${contactEmail}`}><u>{contactEmail}</u></a>.</>}</p>
     <form className="contact-form" onSubmit={submit}>
       <label>Your name<input required value={form.name} onChange={e => setForm({...form, name:e.target.value})} placeholder="Name"/></label>
       <label>Email address<input required type="email" value={form.email} onChange={e => setForm({...form, email:e.target.value})} placeholder="you@example.com"/></label>
@@ -456,7 +457,7 @@ function AdminLogin({ onLogin }) {
     }
   }
 
-  async function forgotPassword() { "Forgot Password button clicked!";
+  async function forgotPassword() {
     if (!supabase) {
       setStatus("Supabase connection is not configured.");
       return;
@@ -540,6 +541,39 @@ function AdminLogin({ onLogin }) {
 }
 
 
+function ResetPassword({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function submit(event) {
+    event.preventDefault();
+    if (!supabase) return setStatus("Supabase connection is not configured.");
+    if (password.length < 8) return setStatus("Use at least 8 characters for your password.");
+    if (password !== confirmPassword) return setStatus("Passwords do not match.");
+    setLoading(true);
+    setStatus("");
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (error) return setStatus(error.message);
+    setStatus("Password updated successfully.");
+    setTimeout(onDone, 900);
+  }
+
+  return <main className="detail-page">
+    <p className="eyebrow">ACCOUNT SECURITY</p>
+    <h1>New password<span>.</span></h1>
+    <p className="detail-lead">Choose a new password for your admin account.</p>
+    <form className="contact-form" onSubmit={submit}>
+      <label>New password<input type="password" minLength={8} required value={password} onChange={e => setPassword(e.target.value)} /></label>
+      <label>Confirm password<input type="password" minLength={8} required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} /></label>
+      <button className="submit-button" disabled={loading}>{loading ? "UPDATING..." : "UPDATE PASSWORD"} <Arrow diagonal /></button>
+      {status && <p className="form-status">{status}</p>}
+    </form>
+  </main>;
+}
+
 function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState("Overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -554,6 +588,16 @@ function AdminDashboard({ onLogout }) {
   const [loadingPages, setLoadingPages] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editorMessage, setEditorMessage] = useState("");
+
+  const [mediaFiles, setMediaFiles] = useState([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
+  const [mediaUploading, setMediaUploading] = useState(false);
+  const [mediaMessage, setMediaMessage] = useState("");
+
+  const [contactMessages, setContactMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messagesStatus, setMessagesStatus] = useState("");
+
 const [homeSettings, setHomeSettings] = useState({
   hero_title: "AL MUBIN",
   hero_subtitle: "SIUUU",
@@ -588,7 +632,7 @@ const [homeSettings, setHomeSettings] = useState({
 
 const [homeEditorDevice, setHomeEditorDevice] = useState("desktop");
 
-  
+
 
 const deviceSpecificHomeSettings = [
   "eyebrow_size",
@@ -641,6 +685,7 @@ const [homeMessage, setHomeMessage] = useState("");
   { name: "Typography", icon: "T" },
   { name: "Image Editor", icon: "▧" },
   { name: "Media Library", icon: "▦" },
+  { name: "Messages", icon: "✉" },
   { name: "Settings", icon: "⚙" }
 ];
 
@@ -696,6 +741,84 @@ const [homeMessage, setHomeMessage] = useState("");
 
   setHomeMessage("Home page settings saved successfully.");
 }
+  async function loadMedia() {
+    if (!supabase) return setMediaMessage("Supabase connection is not configured.");
+    setMediaLoading(true);
+    setMediaMessage("");
+    const { data, error } = await supabase.storage.from("site-media").list("", {
+      limit: 100,
+      sortBy: { column: "created_at", order: "desc" }
+    });
+    setMediaLoading(false);
+    if (error) return setMediaMessage(error.message);
+    setMediaFiles((data || []).filter(file => file.name !== ".emptyFolderPlaceholder"));
+  }
+
+  async function uploadMedia(event) {
+    const files = Array.from(event.target.files || []);
+    if (!files.length || !supabase) return;
+    setMediaUploading(true);
+    setMediaMessage("");
+    let uploaded = 0;
+    for (const file of files) {
+      const safeName = file.name.trim().replace(/[^a-zA-Z0-9._-]/g, "-");
+      const path = `${Date.now()}-${safeName}`;
+      const { error } = await supabase.storage.from("site-media").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type || undefined
+      });
+      if (error) {
+        setMediaMessage(error.message);
+        break;
+      }
+      uploaded += 1;
+    }
+    setMediaUploading(false);
+    if (uploaded) setMediaMessage(`${uploaded} file(s) uploaded successfully.`);
+    event.target.value = "";
+    await loadMedia();
+  }
+
+  async function deleteMedia(fileName) {
+    if (!supabase) return;
+    if (!window.confirm(`Delete ${fileName}? This cannot be undone.`)) return;
+    const { error } = await supabase.storage.from("site-media").remove([fileName]);
+    if (error) return setMediaMessage(error.message);
+    setMediaMessage("File deleted.");
+    await loadMedia();
+  }
+
+  function getMediaUrl(fileName) {
+    return supabase?.storage.from("site-media").getPublicUrl(fileName)?.data?.publicUrl || "";
+  }
+
+  async function loadMessages() {
+    if (!supabase) return setMessagesStatus("Supabase connection is not configured.");
+    setMessagesLoading(true);
+    setMessagesStatus("");
+    const { data, error } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(100);
+    setMessagesLoading(false);
+    if (error) return setMessagesStatus(error.message);
+    setContactMessages(data || []);
+  }
+
+  async function deleteMessage(messageId) {
+    if (!supabase || !window.confirm("Delete this message permanently?")) return;
+    const { error } = await supabase.from("contact_messages").delete().eq("id", messageId);
+    if (error) return setMessagesStatus(error.message);
+    setMessagesStatus("Message deleted.");
+    await loadMessages();
+  }
+
+  function updateSection(index, key, value) {
+    setHomeSettings(previous => {
+      const current = Array.isArray(previous.section_content) ? [...previous.section_content] : sections.map(item => ({ ...item }));
+      current[index] = { ...current[index], [key]: value };
+      return { ...previous, section_content: current };
+    });
+  }
+
   async function loadPages() {
     if (!supabase) {
       setEditorMessage("Supabase connection is not configured.");
@@ -721,13 +844,10 @@ const [homeMessage, setHomeMessage] = useState("");
   }
 
  useEffect(() => {
-  if (activeTab === "Page Editor") {
-    loadPages();
-  }
-
-  if (activeTab === "Home Page Editor") {
-    loadHomeSettings();
-  }
+  if (activeTab === "Overview" || activeTab === "Page Editor") loadPages();
+  if (["Home Page Editor", "Typography", "Image Editor", "Settings"].includes(activeTab)) loadHomeSettings();
+  if (activeTab === "Media Library") loadMedia();
+  if (activeTab === "Messages") loadMessages();
 }, [activeTab]);
 
   function selectPage(page) {
@@ -752,262 +872,6 @@ const [homeMessage, setHomeMessage] = useState("");
     setEditorMessage("Create a new page.");
   }
 
-  async function savePage() {
-    if (!supabase) {
-      setEditorMessage("Supabase connection is not configured.");
-      return;
-    }
-
-    if (!editorTitle.trim() || !editorSlug.trim()) {
-      setEditorMessage("Please enter both a page title and URL slug.");
-      return;
-    }
-
-    setSaving(true);
-    setEditorMessage("");
-
-    const pageData = {
-      title: editorTitle.trim(),
-      slug: editorSlug.trim().toLowerCase().replace(/\s+/g, "-"),
-      content: { body: editorContent },
-      status: editorStatus,
-      published_at:
-        editorStatus === "published"
-          ? new Date().toISOString()
-          : null
-    };
-
-    let result;
-
-    if (selectedPage?.id) {
-      result = await supabase
-        .from("pages")
-        .update(pageData)
-        .eq("id", selectedPage.id)
-        .select()
-        .single();
-    } else {
-      result = await supabase
-        .from("pages")
-        .insert([{
-          ...pageData,
-          sort_order: pages.length + 1
-        }])
-        .select()
-        .single();
-    }
-
-    setSaving(false);
-
-    if (result.error) {
-      setEditorMessage(result.error.message);
-      return;
-    }
-
-    setEditorMessage("Page saved successfully.");
-
-    await loadPages();
-    selectPage(result.data);
-  }
-
-  return (
-    <div className="cms-layout">
-      <aside className={`cms-sidebar ${sidebarOpen ? "" : "collapsed"}`}>
-        <div className="cms-brand">
-          <span>AM.</span>
-          {sidebarOpen && <small>STUDIO</small>}
-        </div>
-
-        <button
-          className="cms-toggle"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          {sidebarOpen ? "←" : "→"}
-        </button>
-
-        <p className="cms-menu-label">
-          {sidebarOpen ? "WORKSPACE" : "—"}
-        </p>
-
-        <nav className="cms-nav">
-          {menuItems.map(item => (
-            <button
-              key={item.name}
-              className={`cms-nav-item ${
-                activeTab === item.name ? "active" : ""
-              }`}
-              onClick={() => setActiveTab(item.name)}
-              title={item.name}
-            >
-              <span className="cms-nav-icon">{item.icon}</span>
-              {sidebarOpen && <span>{item.name}</span>}
-            </button>
-          ))}
-        </nav>
-
-        <div className="cms-sidebar-bottom">
-          <button onClick={onLogout} className="cms-logout">
-            <span>↗</span>
-            {sidebarOpen && <span>Sign Out</span>}
-          </button>
-        </div>
-      </aside>
-
-      <main className="cms-main">
-        <header className="cms-topbar">
-          <div>
-            <p className="cms-breadcrumb">AL MUBIN / ADMIN</p>
-            <h1>{activeTab}</h1>
-          </div>
-
-          <div className="cms-topbar-right">
-            <span className="cms-status">
-              <span className="cms-status-dot"></span>
-              Website Admin
-            </span>
-            <span className="cms-avatar">AM</span>
-          </div>
-        </header>
-
-        {activeTab === "Overview" && (
-          <section className="cms-content">
-            <div className="cms-welcome">
-              <p className="cms-eyebrow">YOUR DIGITAL SPACE</p>
-              <h2>Welcome back.</h2>
-              <p>
-                Manage your website, content and visual identity
-                from one place.
-              </p>
-            </div>
-
-            <div className="cms-stats">
-              <div className="cms-stat-card">
-                <span>WEBSITE STATUS</span>
-                <strong>Published</strong>
-                <small>Your website is online</small>
-              </div>
-              <div className="cms-stat-card">
-                <span>CONTENT</span>
-                <strong>{pages.length}</strong>
-                <small>Pages in your database</small>
-              </div>
-              <div className="cms-stat-card">
-                <span>MEDIA</span>
-                <strong>—</strong>
-                <small>Media management coming next</small>
-              </div>
-            </div>
-
-            <div className="cms-section-heading">
-              <p className="cms-eyebrow">QUICK ACCESS</p>
-              <h2>Manage your website</h2>
-            </div>
-
-            <div className="cms-quick-grid">
-              {menuItems.slice(1).map(item => (
-                <button
-                  key={item.name}
-                  className="cms-quick-card"
-                  onClick={() => setActiveTab(item.name)}
-                >
-                  <span>{item.icon}</span>
-                  <strong>{item.name}</strong>
-                  <small>Open workspace ↗</small>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {activeTab === "Page Editor" && (
-          <section className="cms-content">
-            <div className="cms-editor-heading">
-              <div>
-                <p className="cms-eyebrow">CONTENT MANAGEMENT</p>
-                <h2>Edit your pages.</h2>
-                <p>Write, update and manage your website content.</p>
-              </div>
-
-              <button
-                className="cms-new-page"
-                onClick={createNewPage}
-              >
-                + NEW PAGE
-              </button>
-            </div>
-
-            <div className="cms-editor-layout">
-              <div className="cms-page-list">
-                <div className="cms-list-heading">
-                  <strong>Your Pages</strong>
-                  <span>{pages.length}</span>
-                </div>
-
-                {loadingPages ? (
-                  <p className="cms-editor-note">Loading pages...</p>
-                ) : pages.length === 0 ? (
-                  <p className="cms-editor-note">
-                    No pages found. Create your first page.
-                  </p>
-                ) : (
-                  pages.map(page => (
-                    <button
-                      key={page.id}
-                      className={`cms-page-item ${
-                        selectedPage?.id === page.id ? "selected" : ""
-                      }`}
-                      onClick={() => selectPage(page)}
-                    >
-                      <strong>{page.title}</strong>
-                      <small>/{page.slug}</small>
-                      <span>{page.status || "draft"}</span>
-                    </button>
-                  ))
-                )}
-              </div>
-
-              <div className="cms-edit-panel">
-                <div className="cms-list-heading">
-                  <strong>
-                    {selectedPage ? "Edit Page" : "New Page"}
-                  </strong>
-                  <span>EDITOR</span>
-                </div>
-
-                <label className="cms-field">
-                  Page Title
-                  <input
-                    value={editorTitle}
-                    onChange={e => setEditorTitle(e.target.value)}
-                    placeholder="e.g. About Me"
-                  />
-                </label>
-
-                <label className="cms-field">
-                  URL Slug
-                  <input
-                    value={editorSlug}
-                    onChange={e => setEditorSlug(e.target.value)}
-                    placeholder="e.g. about"
-                  />
-                </label>
-
-                <label className="cms-field">
-                  Page Content
-                  <textarea
-                    value={editorContent}
-                    onChange={e => setEditorContent(e.target.value)}
-                    placeholder="Write your page content here..."
-                    rows={12}
-                  />
-                </label>
-
-                <label className="cms-field">
-                  Publishing Status
-                  <select
-                    value={editorStatus}
-                    onChange={e => setEditorStatus(e.target.value)}
-                  >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
@@ -1020,6 +884,8 @@ const [homeMessage, setHomeMessage] = useState("");
                 >
                   {saving ? "SAVING..." : "SAVE PAGE ↗"}
                 </button>
+
+                {selectedPage && <button type="button" className="cms-delete-button" onClick={deletePage} disabled={saving}>DELETE PAGE</button>}
 
                 {editorMessage && (
                   <p className="cms-editor-message">{editorMessage}</p>
@@ -1042,6 +908,7 @@ const [homeMessage, setHomeMessage] = useState("");
 
     <div className="home-device-tabs">
       <button
+        type="button"
         className={homeEditorDevice === "desktop" ? "active" : ""}
         onClick={() => setHomeEditorDevice("desktop")}
       >
@@ -1049,6 +916,7 @@ const [homeMessage, setHomeMessage] = useState("");
       </button>
 
       <button
+        type="button"
         className={homeEditorDevice === "ipad" ? "active" : ""}
         onClick={() => setHomeEditorDevice("ipad")}
       >
@@ -1056,6 +924,7 @@ const [homeMessage, setHomeMessage] = useState("");
       </button>
 
       <button
+        type="button"
         className={homeEditorDevice === "mobile" ? "active" : ""}
         onClick={() => setHomeEditorDevice("mobile")}
       >
@@ -1069,7 +938,10 @@ const [homeMessage, setHomeMessage] = useState("");
         <span>01</span>
       </div>
 
-      
+      <label className="cms-field">Hero Image URL<input type="url" value={homeSettings.hero_image ?? ""} onChange={e => updateHomeSetting("hero_image", e.target.value)} placeholder="https://..." /></label>
+      {homeSettings.hero_image && <img className="cms-image-preview" src={homeSettings.hero_image} alt="Hero preview" />}
+
+
       <div className="cms-list-heading">
         <strong>Welcome Text</strong>
         <span>02</span>
@@ -1233,85 +1105,8 @@ const [homeMessage, setHomeMessage] = useState("");
         />
       </label>
 
-      
 
-      <label className="cms-field">
-        Title
-        <input
-          value={homeSettings.hero_title ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("hero_title", e.target.value)
-          }
-        />
-      </label>
 
-      <label className="cms-field">
-        Font
-        <select
-          value={homeSettings.title_font ?? "Manrope"}
-          onChange={(e) =>
-            updateHomeSetting("title_font", e.target.value)
-          }
-        >
-          <option>Manrope</option>
-          <option>DM Sans</option>
-          <option>Arial</option>
-          <option>Georgia</option>
-          <option>Playfair Display</option>
-        </select>
-      </label>
-
-      <label className="cms-field">
-        Font Size: {homeSettings.title_size ?? 150}px
-        <input
-          type="range"
-          min="40"
-          max="210"
-          value={homeSettings.title_size ?? 150}
-          onChange={(e) =>
-            updateHomeSetting("title_size", Number(e.target.value))
-          }
-        />
-      </label>
-
-      <label className="cms-field">
-        Text Colour
-        <input
-          type="color"
-          value={homeSettings.title_color ?? "#ffffff"}
-          onChange={(e) =>
-            updateHomeSetting("title_color", e.target.value)
-          }
-        />
-      </label>
-
-      <label className="cms-field">
-        Horizontal Position: {homeSettings.title_x ?? 8}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={homeSettings.title_x ?? 8}
-          onChange={(e) =>
-            updateHomeSetting("title_x", Number(e.target.value))
-          }
-        />
-      </label>
-
-      <label className="cms-field">
-        Vertical Position: {homeSettings.title_y ?? 45}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={homeSettings.title_y ?? 45}
-          onChange={(e) =>
-            updateHomeSetting("title_y", Number(e.target.value))
-          }
-        />
-      </label>
-
-    
       <div className="cms-list-heading">
         <strong>SIUUU Subtitle</strong>
         <span>04</span>
@@ -1441,16 +1236,83 @@ const [homeMessage, setHomeMessage] = useState("");
   </section>
 )}
 
-
-{!["Overview", "Page Editor", "Home Page Editor"].includes(activeTab) && (
+{activeTab === "Typography" && (
   <section className="cms-content">
-    <div className="cms-placeholder">
-      <p className="cms-eyebrow">WORKSPACE</p>
-      <h2>{activeTab}</h2>
-      <p>This workspace will be built in the next step.</p>
+    <div className="cms-editor-heading"><div><p className="cms-eyebrow">DESIGN SYSTEM</p><h2>Typography settings.</h2><p>Set the site-wide heading and body fonts.</p></div></div>
+    <div className="cms-edit-panel">
+      <label className="cms-field">Heading font<select value={homeSettings.global_heading_font || "Manrope"} onChange={e => setHomeSettings(p => ({...p,global_heading_font:e.target.value}))}>{["Manrope","DM Sans","Arial","Georgia","Playfair Display"].map(x => <option key={x}>{x}</option>)}</select></label>
+      <label className="cms-field">Body font<select value={homeSettings.global_body_font || "DM Sans"} onChange={e => setHomeSettings(p => ({...p,global_body_font:e.target.value}))}>{["DM Sans","Manrope","Arial","Georgia","Playfair Display"].map(x => <option key={x}>{x}</option>)}</select></label>
+      <label className="cms-field">Base body size: {homeSettings.global_body_size || 14}px<input type="range" min="12" max="22" value={homeSettings.global_body_size || 14} onChange={e => setHomeSettings(p => ({...p,global_body_size:Number(e.target.value)}))}/></label>
+      <button className="cms-save-button" onClick={saveHomeSettings} disabled={homeSaving}>{homeSaving ? "SAVING..." : "SAVE TYPOGRAPHY"}</button>
+      {homeMessage && <p className="cms-editor-message">{homeMessage}</p>}
     </div>
   </section>
 )}
+
+{activeTab === "Image Editor" && (
+  <section className="cms-content">
+    <div className="cms-editor-heading"><div><p className="cms-eyebrow">VISUAL CONTENT</p><h2>Edit section images.</h2><p>Change the image and alt text for each homepage section.</p></div></div>
+    <div className="cms-edit-panel">
+      {(homeSettings.section_content || sections).map((item, index) => <div className="cms-image-editor-row" key={item.id || index}>
+        <div className="cms-list-heading"><strong>{item.title || `Section ${index+1}`}</strong><span>{String(index+1).padStart(2,"0")}</span></div>
+        <label className="cms-field">Image URL<input type="url" value={item.image || ""} onChange={e => updateSection(index,"image",e.target.value)} /></label>
+        <label className="cms-field">Alt text<input value={item.alt || ""} onChange={e => updateSection(index,"alt",e.target.value)} /></label>
+        {item.image && <img className="cms-image-preview" src={item.image} alt={item.alt || "Section preview"}/ >}
+      </div>)}
+      <button className="cms-save-button" onClick={saveHomeSettings} disabled={homeSaving}>{homeSaving ? "SAVING..." : "SAVE IMAGES"}</button>
+      {homeMessage && <p className="cms-editor-message">{homeMessage}</p>}
+    </div>
+  </section>
+)}
+
+{activeTab === "Media Library" && (
+  <section className="cms-content">
+    <div className="cms-editor-heading"><div><p className="cms-eyebrow">SUPABASE STORAGE / SITE-MEDIA</p><h2>Your media library.</h2><p>Upload, preview, copy public URLs and delete stored files.</p></div></div>
+    <div className="cms-edit-panel">
+      <label className="cms-upload-label">{mediaUploading ? "UPLOADING..." : "+ UPLOAD FILES"}<input type="file" multiple accept="image/*,video/*" onChange={uploadMedia} disabled={mediaUploading}/></label>
+      <button type="button" className="cms-secondary-button" onClick={loadMedia} disabled={mediaLoading}>{mediaLoading ? "REFRESHING..." : "REFRESH LIBRARY"}</button>
+      {mediaMessage && <p className="cms-editor-message">{mediaMessage}</p>}
+      {mediaLoading ? <p className="cms-editor-note">Loading files...</p> : mediaFiles.length === 0 ? <p className="cms-editor-note">No files found in site-media.</p> : <div className="cms-media-grid">{mediaFiles.map(file => {
+        const url = getMediaUrl(file.name);
+        const isImage = /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(file.name);
+        return <article className="cms-media-card" key={file.id || file.name}>
+          {isImage ? <img src={url} alt={file.name}/> : <div className="cms-media-file">FILE</div>}
+          <strong title={file.name}>{file.name}</strong>
+          <small>{file.metadata?.size ? `${Math.round(file.metadata.size/1024)} KB` : "Stored file"}</small>
+          <button type="button" onClick={() => { navigator.clipboard?.writeText(url); setMediaMessage("Public URL copied."); }}>COPY URL</button>
+          <button type="button" className="cms-delete-button" onClick={() => deleteMedia(file.name)}>DELETE</button>
+        </article>;
+      })}</div>}
+    </div>
+  </section>
+)}
+
+{activeTab === "Messages" && (
+  <section className="cms-content">
+    <div className="cms-editor-heading"><div><p className="cms-eyebrow">CONTACT INBOX</p><h2>Website messages.</h2><p>Messages submitted through your contact form.</p></div><button className="cms-secondary-button" onClick={loadMessages}>REFRESH</button></div>
+    {messagesStatus && <p className="cms-editor-message">{messagesStatus}</p>}
+    {messagesLoading ? <p className="cms-editor-note">Loading messages...</p> : contactMessages.length === 0 ? <p className="cms-editor-note">No messages found.</p> : <div className="cms-message-list">{contactMessages.map(message => <article className="cms-message-card" key={message.id}>
+      <div className="cms-list-heading"><strong>{message.name || "No name"}</strong><span>{message.created_at ? new Date(message.created_at).toLocaleString() : ""}</span></div>
+      <p><a href={`mailto:${message.email}`}>{message.email}</a></p><p>{message.message}</p>
+      <button className="cms-delete-button" onClick={() => deleteMessage(message.id)}>DELETE MESSAGE</button>
+    </article>)}</div>}
+  </section>
+)}
+
+{activeTab === "Settings" && (
+  <section className="cms-content">
+    <div className="cms-editor-heading"><div><p className="cms-eyebrow">SITE CONFIGURATION</p><h2>Website settings.</h2><p>Manage the site identity and footer text.</p></div></div>
+    <div className="cms-edit-panel">
+      <label className="cms-field">Website name<input value={homeSettings.site_name || "AL MUBIN"} onChange={e => setHomeSettings(p => ({...p,site_name:e.target.value}))}/></label>
+      <label className="cms-field">Browser title<input value={homeSettings.site_title || "AL MUBIN — Personal Digital World"} onChange={e => setHomeSettings(p => ({...p,site_title:e.target.value}))}/></label>
+      <label className="cms-field">Footer tagline<input value={homeSettings.footer_tagline || "MADE OF MOMENTS & MEANING."} onChange={e => setHomeSettings(p => ({...p,footer_tagline:e.target.value}))}/></label>
+      <label className="cms-field">Contact email<input type="email" value={homeSettings.contact_email || ""} onChange={e => setHomeSettings(p => ({...p,contact_email:e.target.value}))} placeholder="hello@example.com"/></label>
+      <button className="cms-save-button" onClick={saveHomeSettings} disabled={homeSaving}>{homeSaving ? "SAVING..." : "SAVE SETTINGS"}</button>
+      {homeMessage && <p className="cms-editor-message">{homeMessage}</p>}
+    </div>
+  </section>
+)}
+
       </main>
     </div>
   );
@@ -1464,6 +1326,18 @@ export default function App() {
   const [adminSession, setAdminSession] = useState(null);
   const [adminAuthorized, setAdminAuthorized] = useState(false);
   const [adminChecked, setAdminChecked] = useState(false);
+  const [siteConfig, setSiteConfig] = useState({});
+
+  useEffect(() => {
+    let active = true;
+    async function loadSiteConfig() {
+      if (!supabase) return;
+      const { data } = await supabase.from("site_settings").select("header").eq("id", 1).single();
+      if (active && data?.header) setSiteConfig(data.header);
+    }
+    loadSiteConfig();
+    return () => { active = false; };
+  }, []);
 
   function navigate(next) {
     setPage(next);
@@ -1490,15 +1364,15 @@ export default function App() {
     });
 
     const {
-  data: { subscription }
-} = supabase.auth.onAuthStateChange((event, session) => {
-  if (event === "PASSWORD_RECOVERY") {
-    setPage("reset-password");
-    return;
-  }
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setPage("reset-password");
+        return;
+      }
 
-  setAdminSession(session);
-});
+      setAdminSession(session);
+    });
 
     return () => {
       active = false;
@@ -1522,10 +1396,11 @@ export default function App() {
 
       if (!active) return;
 
+      setAdminAuthorized(!error && data === true);
+
       if (error || data !== true) {
- setAdminAuthorized(true);
-} else {
-        setAdminAuthorized(true);
+        await supabase.auth.signOut();
+        setAdminSession(null);
       }
 
       setAdminChecked(true);
@@ -1552,11 +1427,11 @@ export default function App() {
   useEffect(() => {
     document.title =
       page === "home"
-        ? "AL MUBIN — Personal Digital World"
+        ? (siteConfig.site_title || "AL MUBIN — Personal Digital World")
         : page === "admin"
         ? "Admin — AL MUBIN"
         : `${page[0].toUpperCase() + page.slice(1)} — AL MUBIN`;
-  }, [page]);
+  }, [page, siteConfig.site_title]);
 
   async function logout() {
     await supabase.auth.signOut();
@@ -1569,9 +1444,9 @@ export default function App() {
     <>
       <Header active={page} navigate={navigate} />
 
-   {page === "reset-password" ? (
-  <ResetPassword onDone={() => navigate("admin")} />
-) : page === "admin" ? (
+      {page === "reset-password" ? (
+        <ResetPassword onDone={() => navigate("admin")} />
+      ) : page === "admin" ? (
         !adminChecked ? (
           <main className="detail-page">
             <p className="eyebrow">SECURE ACCESS</p>
@@ -1584,6 +1459,8 @@ export default function App() {
         )
       ) : page === "home" ? (
         <Home navigate={navigate} />
+      ) : page === "contact" ? (
+        <ContactPage navigate={navigate} contactEmail={siteConfig.contact_email || ""} />
       ) : (
         <DetailPage page={page} navigate={navigate} />
       )}
@@ -1597,11 +1474,11 @@ export default function App() {
             navigate("home");
           }}
         >
-          AM<span>.</span>
+          {(siteConfig.site_name || "AM")}<span>.</span>
         </a>
 
         <span>© {new Date().getFullYear()} AL MUBIN</span>
-        <span>MADE OF MOMENTS & MEANING.</span>
+        <span>{siteConfig.footer_tagline || "MADE OF MOMENTS & MEANING."}</span>
 
         <button
           onClick={() =>
