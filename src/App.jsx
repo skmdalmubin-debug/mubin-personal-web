@@ -44,72 +44,137 @@ function SectionPreview({ item, index, navigate }) {
   </section>;
 }
 
+
 function Home({ navigate }) {
-  return <main id="home">
-    <section className="hero">
-      <div className="hero-topline">
-        <span>INDEPENDENTLY CURATED</span>
-        <span>DHAKA, BANGLADESH</span>
-      </div>
+  const [settings, setSettings] = useState({
+    hero_title: "AL MUBIN",
+    hero_subtitle:
+      "A collection of places, passions, memories and moments that shape my journey.",
+    hero_image:
+      "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
+    intro_heading:
+      "Not just a website.\nA little world of my own.",
+    intro_description:
+      "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
+  });
 
-      <div className="hero-image">
-        <img
-          src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90"
-          alt="Quiet landscape at sunrise"
-        />
+  useEffect(() => {
+    let active = true;
 
-        <div className="hero-title-wrap">
-          <p className="eyebrow">WELCOME TO MY WORLD</p>
-          <h1>AL MUBIN<span>.</span></h1>
+    async function loadSettings() {
+      if (!supabase) return;
 
-          <div className="hero-bottom">
-            <p>
-              A collection of places, passions, memories<br className="desktop-break" />
-              and moments that shape my journey.
-            </p>
-            <a className="circle-link" href="#about" aria-label="Scroll to discover">
-              <span>SCROLL<br />TO EXPLORE</span>
-              <b>↓</b>
-            </a>
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("header")
+        .eq("id", 1)
+        .single();
+
+      if (!active || error || !data?.header) return;
+
+      setSettings((previous) => ({
+        ...previous,
+        ...data.header
+      }));
+    }
+
+    loadSettings();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return (
+    <main id="home">
+      <section className="hero">
+        <div className="hero-topline">
+          <span>INDEPENDENTLY CURATED</span>
+          <span>DHAKA, BANGLADESH</span>
+        </div>
+
+        <div className="hero-image">
+          <img
+            src={settings.hero_image}
+            alt="Quiet landscape at sunrise"
+          />
+
+          <div className="hero-title-wrap">
+            <p className="eyebrow">WELCOME TO MY WORLD</p>
+            <h1>{settings.hero_title}<span>.</span></h1>
+
+            <div className="hero-bottom">
+              <p style={{ whiteSpace: "pre-line" }}>
+                {settings.hero_subtitle}
+              </p>
+
+              <a
+                className="circle-link"
+                href="#about"
+                aria-label="Scroll to discover"
+              >
+                <span>SCROLL<br />TO EXPLORE</span>
+                <b>↓</b>
+              </a>
+            </div>
+          </div>
+
+          <div className="hero-image-caption">
+            <span>01 — A WORLD IN PROGRESS</span>
+            <span>SCROLL TO DISCOVER</span>
           </div>
         </div>
+      </section>
 
-        <div className="hero-image-caption">
-          <span>01 — A WORLD IN PROGRESS</span>
-          <span>SCROLL TO DISCOVER</span>
+      <section className="intro section-pad">
+        <p className="eyebrow">A PERSONAL ARCHIVE</p>
+
+        <div className="intro-grid">
+          <h2 style={{ whiteSpace: "pre-line" }}>
+            {settings.intro_heading}
+          </h2>
+
+          <p>{settings.intro_description}</p>
         </div>
+      </section>
+
+      <div className="section-heading section-pad">
+        <span>EXPLORE MY WORLD</span>
+        <span>SCROLL TO DISCOVER ↓</span>
       </div>
-    </section>
 
-    <section className="intro section-pad">
-      <p className="eyebrow">A PERSONAL ARCHIVE</p>
-      <div className="intro-grid">
-        <h2>Not just a website.<br/><span>A little world of my own.</span></h2>
-        <p>This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around.</p>
-      </div>
-    </section>
+      {sections.map((item, index) => (
+        <SectionPreview
+          key={item.id}
+          item={item}
+          index={index}
+          navigate={navigate}
+        />
+      ))}
 
-    <div className="section-heading section-pad">
-      <span>EXPLORE MY WORLD</span>
-      <span>SCROLL TO DISCOVER ↓</span>
-    </div>
+      <section className="contact-band section-pad" id="contact">
+        <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
 
-    {sections.map((item, index) => (
-      <SectionPreview key={item.id} item={item} index={index} navigate={navigate} />
-    ))}
+        <div className="contact-row">
+          <h2>Let's connect<span>.</span></h2>
 
-    <section className="contact-band section-pad" id="contact">
-      <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
-      <div className="contact-row">
-        <h2>Let's connect<span>.</span></h2>
-        <button className="round-arrow" onClick={() => navigate("contact")} aria-label="Open contact page">
-          <Arrow diagonal />
-        </button>
-      </div>
-      <p className="contact-small">For conversations, collaborations or simply saying hello.</p>
-    </section>
-  </main>;
+          <button
+            className="round-arrow"
+            onClick={() => navigate("contact")}
+            aria-label="Open contact page"
+          >
+            <Arrow diagonal />
+          </button>
+        </div>
+
+        <p className="contact-small">
+          For conversations, collaborations or simply saying hello.
+        </p>
+      </section>
+    </main>
+  );
 }
+
 
 function DetailPage({ page, navigate }) {
   const item = sections.find((s) => s.id === page);
