@@ -685,17 +685,31 @@
     width: 100%;
   }
 }
-@media (max-width: 600px) {
-  .hero-image img {
-    object-position: center center;
-  }
+/* FINAL HERO IMAGE FIX */
+
+.hero-image {
+  background: #fff;
 }
+
+.hero-image img {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+.preview-image,
+.detail-image img {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* MOBILE HERO */
 
 @media (max-width: 600px) {
   .hero-image {
     height: auto;
     min-height: 0;
     aspect-ratio: 4 / 3;
+    background: #fff;
   }
 
   .hero-image img {
@@ -703,8 +717,20 @@
     height: 100%;
     object-fit: contain;
     object-position: center;
+    filter: none !important;
+  }
+
+  .hero-image-caption {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    background: #fff;
+    color: #111;
+    padding: 12px;
+    z-index: 3;
   }
 }
+
 
 
 
