@@ -29,7 +29,6 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(100%);
 }
 
 .hero-image:after {
@@ -688,6 +687,11 @@
 
   .cms-new-page {
     width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  .hero-image img {
+    object-position: center center;
   }
 }
 
