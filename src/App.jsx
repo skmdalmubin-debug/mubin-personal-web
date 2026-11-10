@@ -293,6 +293,17 @@ function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState("Overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  const [pages, setPages] = useState([]);
+  const [selectedPage, setSelectedPage] = useState(null);
+  const [editorTitle, setEditorTitle] = useState("");
+  const [editorSlug, setEditorSlug] = useState("");
+  const [editorContent, setEditorContent] = useState("");
+  const [editorStatus, setEditorStatus] = useState("draft");
+
+  const [loadingPages, setLoadingPages] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editorMessage, setEditorMessage] = useState("");
+
   const menuItems = [
     { name: "Overview", icon: "⌂" },
     { name: "Page Editor", icon: "▤" },
@@ -302,9 +313,118 @@ function AdminDashboard({ onLogout }) {
     { name: "Settings", icon: "⚙" }
   ];
 
+  async function loadPages() {
+    if (!supabase) {
+      setEditorMessage("Supabase connection is not configured.");
+      return;
+    }
+
+    setLoadingPages(true);
+    setEditorMessage("");
+
+    const { data, error } = await supabase
+      .from("pages")
+      .select("id, title, slug, content, status, sort_order")
+      .order("sort_order", { ascending: true });
+
+    setLoadingPages(false);
+
+    if (error) {
+      setEditorMessage(error.message);
+      return;
+    }
+
+    setPages(data || []);
+  }
+
+  useEffect(() => {
+    if (activeTab === "Page Editor") {
+      loadPages();
+    }
+  }, [activeTab]);
+
+  function selectPage(page) {
+    setSelectedPage(page);
+    setEditorTitle(page.title || "");
+    setEditorSlug(page.slug || "");
+    setEditorContent(
+      typeof page.content?.body === "string"
+        ? page.content.body
+        : ""
+    );
+    setEditorStatus(page.status || "draft");
+    setEditorMessage("");
+  }
+
+  function createNewPage() {
+    setSelectedPage(null);
+    setEditorTitle("");
+    setEditorSlug("");
+    setEditorContent("");
+    setEditorStatus("draft");
+    setEditorMessage("Create a new page.");
+  }
+
+  async function savePage() {
+    if (!supabase) {
+      setEditorMessage("Supabase connection is not configured.");
+      return;
+    }
+
+    if (!editorTitle.trim() || !editorSlug.trim()) {
+      setEditorMessage("Please enter both a page title and URL slug.");
+      return;
+    }
+
+    setSaving(true);
+    setEditorMessage("");
+
+    const pageData = {
+      title: editorTitle.trim(),
+      slug: editorSlug.trim().toLowerCase().replace(/\s+/g, "-"),
+      content: { body: editorContent },
+      status: editorStatus,
+      published_at:
+        editorStatus === "published"
+          ? new Date().toISOString()
+          : null
+    };
+
+    let result;
+
+    if (selectedPage?.id) {
+      result = await supabase
+        .from("pages")
+        .update(pageData)
+        .eq("id", selectedPage.id)
+        .select()
+        .single();
+    } else {
+      result = await supabase
+        .from("pages")
+        .insert([{
+          ...pageData,
+          sort_order: pages.length + 1
+        }])
+        .select()
+        .single();
+    }
+
+    setSaving(false);
+
+    if (result.error) {
+      setEditorMessage(result.error.message);
+      return;
+    }
+
+    setEditorMessage("Page saved successfully.");
+
+    await loadPages();
+    selectPage(result.data);
+  }
+
   return (
     <div className="cms-layout">
-
       <aside className={`cms-sidebar ${sidebarOpen ? "" : "collapsed"}`}>
         <div className="cms-brand">
           <span>AM.</span>
@@ -362,7 +482,7 @@ function AdminDashboard({ onLogout }) {
           </div>
         </header>
 
-        {activeTab === "Overview" ? (
+        {activeTab === "Overview" && (
           <section className="cms-content">
             <div className="cms-welcome">
               <p className="cms-eyebrow">YOUR DIGITAL SPACE</p>
@@ -379,13 +499,11 @@ function AdminDashboard({ onLogout }) {
                 <strong>Published</strong>
                 <small>Your website is online</small>
               </div>
-
               <div className="cms-stat-card">
                 <span>CONTENT</span>
-                <strong>—</strong>
-                <small>Content management coming next</small>
+                <strong>{pages.length}</strong>
+                <small>Pages in your database</small>
               </div>
-
               <div className="cms-stat-card">
                 <span>MEDIA</span>
                 <strong>—</strong>
@@ -394,10 +512,8 @@ function AdminDashboard({ onLogout }) {
             </div>
 
             <div className="cms-section-heading">
-              <div>
-                <p className="cms-eyebrow">QUICK ACCESS</p>
-                <h2>Manage your website</h2>
-              </div>
+              <p className="cms-eyebrow">QUICK ACCESS</p>
+              <h2>Manage your website</h2>
             </div>
 
             <div className="cms-quick-grid">
@@ -414,14 +530,124 @@ function AdminDashboard({ onLogout }) {
               ))}
             </div>
           </section>
-        ) : (
+        )}
+
+        {activeTab === "Page Editor" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">CONTENT MANAGEMENT</p>
+                <h2>Edit your pages.</h2>
+                <p>Write, update and manage your website content.</p>
+              </div>
+
+              <button
+                className="cms-new-page"
+                onClick={createNewPage}
+              >
+                + NEW PAGE
+              </button>
+            </div>
+
+            <div className="cms-editor-layout">
+              <div className="cms-page-list">
+                <div className="cms-list-heading">
+                  <strong>Your Pages</strong>
+                  <span>{pages.length}</span>
+                </div>
+
+                {loadingPages ? (
+                  <p className="cms-editor-note">Loading pages...</p>
+                ) : pages.length === 0 ? (
+                  <p className="cms-editor-note">
+                    No pages found. Create your first page.
+                  </p>
+                ) : (
+                  pages.map(page => (
+                    <button
+                      key={page.id}
+                      className={`cms-page-item ${
+                        selectedPage?.id === page.id ? "selected" : ""
+                      }`}
+                      onClick={() => selectPage(page)}
+                    >
+                      <strong>{page.title}</strong>
+                      <small>/{page.slug}</small>
+                      <span>{page.status || "draft"}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <div className="cms-edit-panel">
+                <div className="cms-list-heading">
+                  <strong>
+                    {selectedPage ? "Edit Page" : "New Page"}
+                  </strong>
+                  <span>EDITOR</span>
+                </div>
+
+                <label className="cms-field">
+                  Page Title
+                  <input
+                    value={editorTitle}
+                    onChange={e => setEditorTitle(e.target.value)}
+                    placeholder="e.g. About Me"
+                  />
+                </label>
+
+                <label className="cms-field">
+                  URL Slug
+                  <input
+                    value={editorSlug}
+                    onChange={e => setEditorSlug(e.target.value)}
+                    placeholder="e.g. about"
+                  />
+                </label>
+
+                <label className="cms-field">
+                  Page Content
+                  <textarea
+                    value={editorContent}
+                    onChange={e => setEditorContent(e.target.value)}
+                    placeholder="Write your page content here..."
+                    rows={12}
+                  />
+                </label>
+
+                <label className="cms-field">
+                  Publishing Status
+                  <select
+                    value={editorStatus}
+                    onChange={e => setEditorStatus(e.target.value)}
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                  </select>
+                </label>
+
+                <button
+                  className="cms-save-button"
+                  onClick={savePage}
+                  disabled={saving}
+                >
+                  {saving ? "SAVING..." : "SAVE PAGE ↗"}
+                </button>
+
+                {editorMessage && (
+                  <p className="cms-editor-message">{editorMessage}</p>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {!["Overview", "Page Editor"].includes(activeTab) && (
           <section className="cms-content">
             <div className="cms-placeholder">
               <p className="cms-eyebrow">WORKSPACE</p>
               <h2>{activeTab}</h2>
-              <p>
-                This workspace will be built in the next step.
-              </p>
+              <p>This workspace will be built in the next step.</p>
             </div>
           </section>
         )}
