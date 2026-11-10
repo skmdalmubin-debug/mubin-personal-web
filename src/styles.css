@@ -727,23 +727,20 @@
     padding: 0 5%;
   }
 
-  .hero-title-wrap .eyebrow {
-    font-size: clamp(7px, 1.8vw, 10px) !important;
-    max-width: none;
-    white-space: nowrap;
-  }
+.hero-title-wrap .eyebrow {
+  max-width: none;
+  white-space: nowrap;
+}
 
-  .hero-title-wrap h1 {
-    font-size: clamp(30px, 10vw, 58px) !important;
-    letter-spacing: -0.08em;
-    white-space: nowrap;
-    max-width: 95%;
-  }
+.hero-title-wrap h1 {
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+  max-width: 95%;
+}
 
-  .hero-title-wrap > p:not(.eyebrow) {
-    font-size: clamp(12px, 3.5vw, 18px) !important;
-    max-width: 90%;
-  }
+.hero-title-wrap > p:not(.eyebrow) {
+  max-width: 90%;
+}
 }
 
 .hero-image-caption {
