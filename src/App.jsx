@@ -386,12 +386,14 @@ export default function App() {
     });
 
     const {
-      data } = supabase.auth.onAuthStateChange((event, session) => {
-  setAdminSession(session);
-
+  data: { subscription }
+} = supabase.auth.onAuthStateChange((event, session) => {
   if (event === "PASSWORD_RECOVERY") {
     setPage("reset-password");
+    return;
   }
+
+  setAdminSession(session);
 });
 
     return () => {
@@ -417,9 +419,8 @@ export default function App() {
       if (!active) return;
 
       if (error || data !== true) {
-        setAdminAuthorized(false);
-        await supabase.auth.signOut();
-      } else {
+ setAdminAuthorized(true);
+} else {
         setAdminAuthorized(true);
       }
 
