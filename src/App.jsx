@@ -288,70 +288,148 @@ function AdminLogin({ onLogin }) {
   );
 }
 
+
 function AdminDashboard({ onLogout }) {
-  return (
-    <main className="detail-page">
-      <p className="eyebrow">PRIVATE ADMINISTRATION</p>
-      <h1>Dashboard<span>.</span></h1>
-      <p className="detail-lead">
-        Welcome. Your website management space is ready.
-      </p>
+  const [activeTab, setActiveTab] = useState("Overview");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-      <button className="submit-button" onClick={onLogout}>
-        SIGN OUT <Arrow diagonal />
-      </button>
-    </main>
-  );
-}
-function ResetPassword({ onDone }) {
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function submit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setStatus("");
-
-    const { error } = await supabase.auth.updateUser({
-      password
-    });
-
-    setLoading(false);
-
-    if (error) {
-      setStatus(error.message);
-      return;
-    }
-
-    setStatus("Password updated successfully!");
-    onDone();
-  }
+  const menuItems = [
+    { name: "Overview", icon: "⌂" },
+    { name: "Page Editor", icon: "▤" },
+    { name: "Typography", icon: "T" },
+    { name: "Image Editor", icon: "▧" },
+    { name: "Media Library", icon: "▦" },
+    { name: "Settings", icon: "⚙" }
+  ];
 
   return (
-    <main className="detail-page">
-      <p className="eyebrow">SECURE ACCESS</p>
-      <h1>New Password<span>.</span></h1>
-      <form className="contact-form" onSubmit={submit}>
-        <label>
-          New Password
-          <input
-            type="password"
-            minLength={8}
-            required
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Enter new password"
-          />
-        </label>
-        <button className="submit-button" disabled={loading}>
-          {loading ? "UPDATING..." : "UPDATE PASSWORD"}
+    <div className="cms-layout">
+
+      <aside className={`cms-sidebar ${sidebarOpen ? "" : "collapsed"}`}>
+        <div className="cms-brand">
+          <span>AM.</span>
+          {sidebarOpen && <small>STUDIO</small>}
+        </div>
+
+        <button
+          className="cms-toggle"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          {sidebarOpen ? "←" : "→"}
         </button>
-        {status && <p className="form-status">{status}</p>}
-      </form>
-    </main>
+
+        <p className="cms-menu-label">
+          {sidebarOpen ? "WORKSPACE" : "—"}
+        </p>
+
+        <nav className="cms-nav">
+          {menuItems.map(item => (
+            <button
+              key={item.name}
+              className={`cms-nav-item ${
+                activeTab === item.name ? "active" : ""
+              }`}
+              onClick={() => setActiveTab(item.name)}
+              title={item.name}
+            >
+              <span className="cms-nav-icon">{item.icon}</span>
+              {sidebarOpen && <span>{item.name}</span>}
+            </button>
+          ))}
+        </nav>
+
+        <div className="cms-sidebar-bottom">
+          <button onClick={onLogout} className="cms-logout">
+            <span>↗</span>
+            {sidebarOpen && <span>Sign Out</span>}
+          </button>
+        </div>
+      </aside>
+
+      <main className="cms-main">
+        <header className="cms-topbar">
+          <div>
+            <p className="cms-breadcrumb">AL MUBIN / ADMIN</p>
+            <h1>{activeTab}</h1>
+          </div>
+
+          <div className="cms-topbar-right">
+            <span className="cms-status">
+              <span className="cms-status-dot"></span>
+              Website Admin
+            </span>
+            <span className="cms-avatar">AM</span>
+          </div>
+        </header>
+
+        {activeTab === "Overview" ? (
+          <section className="cms-content">
+            <div className="cms-welcome">
+              <p className="cms-eyebrow">YOUR DIGITAL SPACE</p>
+              <h2>Welcome back.</h2>
+              <p>
+                Manage your website, content and visual identity
+                from one place.
+              </p>
+            </div>
+
+            <div className="cms-stats">
+              <div className="cms-stat-card">
+                <span>WEBSITE STATUS</span>
+                <strong>Published</strong>
+                <small>Your website is online</small>
+              </div>
+
+              <div className="cms-stat-card">
+                <span>CONTENT</span>
+                <strong>—</strong>
+                <small>Content management coming next</small>
+              </div>
+
+              <div className="cms-stat-card">
+                <span>MEDIA</span>
+                <strong>—</strong>
+                <small>Media management coming next</small>
+              </div>
+            </div>
+
+            <div className="cms-section-heading">
+              <div>
+                <p className="cms-eyebrow">QUICK ACCESS</p>
+                <h2>Manage your website</h2>
+              </div>
+            </div>
+
+            <div className="cms-quick-grid">
+              {menuItems.slice(1).map(item => (
+                <button
+                  key={item.name}
+                  className="cms-quick-card"
+                  onClick={() => setActiveTab(item.name)}
+                >
+                  <span>{item.icon}</span>
+                  <strong>{item.name}</strong>
+                  <small>Open workspace ↗</small>
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <section className="cms-content">
+            <div className="cms-placeholder">
+              <p className="cms-eyebrow">WORKSPACE</p>
+              <h2>{activeTab}</h2>
+              <p>
+                This workspace will be built in the next step.
+              </p>
+            </div>
+          </section>
+        )}
+      </main>
+    </div>
   );
 }
+
 export default function App() {
   const [page, setPage] = useState(
     () => window.location.hash.replace("#", "") || "home"
