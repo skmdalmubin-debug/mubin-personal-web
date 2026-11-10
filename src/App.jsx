@@ -948,10 +948,12 @@ const [homeMessage, setHomeMessage] = useState("");
 
     return (
     <div className="cms-layout">
-
-
-
-
+                <label className="cms-field">
+                  Status
+                  <select
+                    value={editorStatus}
+                    onChange={(e) => setEditorStatus(e.target.value)}
+                  >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
