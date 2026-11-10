@@ -112,23 +112,135 @@ function Home({ navigate }) {
 }
 
 function DetailPage({ page, navigate }) {
-  const item = sections.find(s => s.id === page);
-  if (page === "contact") return <ContactPage navigate={navigate} />;
-  if (!item) return <Home navigate={navigate} />;
-  return <main className="detail-page">
-    <button className="back-link" onClick={() => navigate("home")}>← BACK TO HOME</button>
-    <p className="eyebrow">{item.number} — {item.eyebrow}</p>
-    <h1>{item.title}<span>.</span></h1>
-    <p className="detail-lead">{item.description}</p>
-    <div className="detail-image"><img src={item.image} alt={item.alt}/></div>
-    <div className="detail-placeholder">
-      <p className="eyebrow">THIS SPACE IS BEING BUILT</p>
-      <h2>{page === "about" ? "The story starts here." : `More ${item.title.toLowerCase()}, coming soon.`}</h2>
-      <p>This page is ready for your own writing, photographs and content. The next step is connecting the editing dashboard so you can manage everything yourself.</p>
-      <button className="text-link" onClick={() => navigate("home")}>Return to homepage <Arrow /></button>
-    </div>
-  </main>;
+  const item = sections.find((s) => s.id === page);
+
+  const [savedPage, setSavedPage] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadPage() {
+      setLoading(true);
+      setSavedPage(null);
+
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("pages")
+        .select("title, content")
+        .eq("slug", page)
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (active) {
+        if (!error && data) {
+          setSavedPage(data);
+        }
+
+        setLoading(false);
+      }
+    }
+
+    if (page === "contact") {
+      setLoading(false);
+    } else {
+      loadPage();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [page]);
+
+  if (page === "contact") {
+    return <ContactPage navigate={navigate} />;
+  }
+
+  if (loading) {
+    return (
+      <main className="detail-page">
+        <p className="eyebrow">LOADING PAGE</p>
+        <h1>Please wait<span>.</span></h1>
+      </main>
+    );
+  }
+
+  const title = savedPage?.title || item?.title || page;
+  const body =
+    typeof savedPage?.content === "string"
+      ? savedPage.content
+      : savedPage?.content?.body || "";
+
+  if (!item && !savedPage) {
+    return <Home navigate={navigate} />;
+  }
+
+  return (
+    <main className="detail-page">
+      <button
+        className="back-link"
+        onClick={() => navigate("home")}
+      >
+        ← BACK TO HOME
+      </button>
+
+      <p className="eyebrow">
+        {item ? `${item.number} — ${item.eyebrow}` : "PERSONAL"}
+      </p>
+
+      <h1>{title}<span>.</span></h1>
+
+      {item && (
+        <>
+          <p className="detail-lead">{item.description}</p>
+
+          <div className="detail-image">
+            <img src={item.image} alt={item.alt} />
+          </div>
+        </>
+      )}
+
+      {savedPage ? (
+        <div className="detail-placeholder">
+          <p
+            className="detail-lead"
+            style={{ whiteSpace: "pre-wrap" }}
+          >
+            {body}
+          </p>
+        </div>
+      ) : (
+        <div className="detail-placeholder">
+          <p className="eyebrow">THIS SPACE IS BEING BUILT</p>
+
+          <h2>
+            {page === "about"
+              ? "The story starts here."
+              : `More ${title.toLowerCase()}, coming soon.`}
+          </h2>
+
+          <p>
+            This page is ready for your own writing,
+            photographs and content.
+          </p>
+
+          <button
+            className="text-link"
+            onClick={() => navigate("home")}
+          >
+            Return to homepage <Arrow />
+          </button>
+        </div>
+      )}
+    </main>
+  );
 }
+
+
 
 function ContactPage({ navigate }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
