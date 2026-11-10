@@ -145,7 +145,7 @@ function Home({ navigate }) {
               }}
             >
               {settings.hero_title}
-              <span>.</span>
+             
             </h1>
 
             <p
