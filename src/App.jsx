@@ -871,6 +871,86 @@ const [homeMessage, setHomeMessage] = useState("");
     setEditorStatus("draft");
     setEditorMessage("Create a new page.");
   }
+  
+  async function savePage() {
+    if (!supabase) {
+      setEditorMessage("Supabase connection is not configured.");
+      return;
+    }
+
+    if (!editorTitle.trim() || !editorSlug.trim()) {
+      setEditorMessage("Title and slug are required.");
+      return;
+    }
+
+    setSaving(true);
+    setEditorMessage("");
+
+    const pageData = {
+      title: editorTitle.trim(),
+      slug: editorSlug.trim().toLowerCase().replace(/\s+/g, "-"),
+      content: { body: editorContent },
+      status: editorStatus
+    };
+
+    let result;
+
+    if (selectedPage?.id) {
+      result = await supabase
+        .from("pages")
+        .update(pageData)
+        .eq("id", selectedPage.id);
+    } else {
+      result = await supabase
+        .from("pages")
+        .insert([pageData]);
+    }
+
+    setSaving(false);
+
+    if (result.error) {
+      setEditorMessage(result.error.message);
+      return;
+    }
+
+    setEditorMessage("Page saved successfully.");
+    await loadPages();
+  }
+
+  async function deletePage() {
+    if (!selectedPage?.id || !supabase) return;
+
+    if (!window.confirm("Delete this page permanently?")) return;
+
+    setSaving(true);
+
+    const { error } = await supabase
+      .from("pages")
+      .delete()
+      .eq("id", selectedPage.id);
+
+    setSaving(false);
+
+    if (error) {
+      setEditorMessage(error.message);
+      return;
+    }
+
+    setSelectedPage(null);
+    setEditorTitle("");
+    setEditorSlug("");
+    setEditorContent("");
+    setEditorStatus("draft");
+    setEditorMessage("Page deleted successfully.");
+
+    await loadPages();
+  }
+
+    return (
+    <div className="cms-layout">
+
+
+
 
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
