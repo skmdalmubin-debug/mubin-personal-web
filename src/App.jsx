@@ -100,29 +100,51 @@ function Home({ navigate }) {
           />
 
           <div className="hero-title-wrap">
-            <p className="eyebrow">WELCOME TO MY WORLD</p>
-            <h1>{settings.hero_title}<span>.</span></h1>
-
+            <p
+  className="eyebrow"
+  style={{
+    fontFamily: settings.eyebrow_font || "DM Sans",
+    fontSize: `${settings.eyebrow_size || 14}px`,
+    color: settings.eyebrow_color || "#ffffff",
+    position: "absolute",
+    left: `${settings.eyebrow_x || 8}%`,
+    top: `${settings.eyebrow_y || 30}%`
+  }}
+>
+  {settings.hero_eyebrow || "WELCOME TO THE WORLD"}
+</p>
+            
             <div className="hero-bottom">
-              <p style={{ whiteSpace: "pre-line" }}>
-                {settings.hero_subtitle}
-              </p>
+              <p
+  style={{
+    whiteSpace: "pre-line",
+    fontFamily: settings.subtitle_font || "DM Sans",
+    fontSize: `${settings.subtitle_size || 24}px`,
+    color: settings.subtitle_color || "#ffffff",
+    position: "absolute",
+    left: `${settings.subtitle_x || 8}%`,
+    top: `${settings.subtitle_y || 70}%`
+  }}
+>
+  {settings.hero_subtitle || "SIUUU"}
+</p>
+              <h1
+  style={{
+    fontFamily: settings.title_font || "Manrope",
+    fontSize: `clamp(60px, ${settings.title_size || 150}px, 210px)`,
+    color: settings.title_color || "#ffffff",
+    position: "absolute",
+    left: `${settings.title_x || 8}%`,
+    top: `${settings.title_y || 45}%`
+  }}
+>
+  {settings.hero_title}<span>.</span>
+</h1>
 
-              <a
-                className="circle-link"
-                href="#about"
-                aria-label="Scroll to discover"
-              >
-                <span>SCROLL<br />TO EXPLORE</span>
-                <b>↓</b>
-              </a>
+        
             </div>
           </div>
 
-          <div className="hero-image-caption">
-            <span>01 — A WORLD IN PROGRESS</span>
-            <span>SCROLL TO DISCOVER</span>
-          </div>
         </div>
       </section>
 
@@ -487,6 +509,12 @@ const [homeSettings, setHomeSettings] = useState({
   intro_heading: "Not just a website. A little world of my own.",
   intro_description: "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
 });
+  const updateHomeSetting = (key, value) => {
+  setHomeSettings((prev) => ({
+    ...prev,
+    [key]: value
+  }));
+};
 
 const [homeLoading, setHomeLoading] = useState(false);
 const [homeSaving, setHomeSaving] = useState(false);
