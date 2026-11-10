@@ -16,32 +16,107 @@ function Arrow({ diagonal = false }) {
 
 function Header({ active, navigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  return <header className="site-header">
-    <a className="wordmark" href="#home" onClick={(e) => { e.preventDefault(); navigate("home"); }}>AM<span>.</span></a>
-    <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">{menuOpen ? "CLOSE" : "MENU"} <span>{menuOpen ? "−" : "+"}</span></button>
-    <nav className={menuOpen ? "main-nav open" : "main-nav"}>
-      <a className={active === "home" ? "nav-active" : ""} href="#home" onClick={(e) => { e.preventDefault(); navigate("home"); setMenuOpen(false); }}>Home</a>
-      <a href="#about" onClick={(e) => { e.preventDefault(); navigate("about"); setMenuOpen(false); }}>About</a>
-      <a href="#travel" onClick={(e) => { e.preventDefault(); navigate("travel"); setMenuOpen(false); }}>Explore</a>
-      <a href="#contact" onClick={(e) => { e.preventDefault(); navigate("contact"); setMenuOpen(false); }}>Contact</a>
-    </nav>
-    <span className="header-note">PERSONAL DIGITAL WORLD</span>
-  </header>;
+
+  return (
+    <header className="site-header">
+      <a
+        className="wordmark"
+        href="#home"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("home");
+        }}
+      >
+        AM<span>.</span>
+      </a>
+
+      <button
+        className="menu-toggle"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle menu"
+      >
+        {menuOpen ? "CLOSE" : "MENU"} <span>{menuOpen ? "−" : "+"}</span>
+      </button>
+
+      <nav className={menuOpen ? "main-nav open" : "main-nav"}>
+        <a
+          className={active === "home" ? "nav-active" : ""}
+          href="#home"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("home");
+            setMenuOpen(false);
+          }}
+        >
+          Home
+        </a>
+
+        <a
+          href="#about"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("about");
+            setMenuOpen(false);
+          }}
+        >
+          About
+        </a>
+
+        <a
+          href="#travel"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("travel");
+            setMenuOpen(false);
+          }}
+        >
+          Explore
+        </a>
+
+        <a
+          href="#contact"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("contact");
+            setMenuOpen(false);
+          }}
+        >
+          Contact
+        </a>
+      </nav>
+
+      <span className="header-note">PERSONAL DIGITAL WORLD</span>
+    </header>
+  );
 }
 
 function SectionPreview({ item, index, navigate }) {
-  return <section className={`preview preview-${index % 2 === 0 ? "image-left" : "image-right"}`} id={item.id}>
-    <div className="preview-image-wrap">
-      <img src={item.image} alt={item.alt} className="preview-image" loading="lazy" />
-      <span className="image-index">{item.number} / 06</span>
-    </div>
-    <div className="preview-copy">
-      <p className="eyebrow">{item.eyebrow}</p>
-      <h2>{item.title}<span>.</span></h2>
-      <p className="preview-description">{item.description}</p>
-      <button className="text-link" onClick={() => navigate(item.id)}>{item.link} <Arrow diagonal /></button>
-    </div>
-  </section>;
+  return (
+    <section
+      className={`preview preview-${index % 2 === 0 ? "image-left" : "image-right"}`}
+      id={item.id}
+    >
+      <div className="preview-image-wrap">
+        <img
+          src={item.image}
+          alt={item.alt}
+          className="preview-image"
+          loading="lazy"
+        />
+        <span className="image-index">{item.number} / 06</span>
+      </div>
+
+      <div className="preview-copy">
+        <p className="eyebrow">{item.eyebrow}</p>
+        <h2>{item.title}<span>.</span></h2>
+        <p className="preview-description">{item.description}</p>
+
+        <button className="text-link" onClick={() => navigate(item.id)}>
+          {item.link} <Arrow diagonal />
+        </button>
+      </div>
+    </section>
+  );
 }
 
 function Home({ navigate }) {
@@ -77,6 +152,7 @@ function Home({ navigate }) {
     intro_description:
       "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
   });
+
   const [homeDevice, setHomeDevice] = useState("desktop");
 
   useEffect(() => {
@@ -93,7 +169,6 @@ function Home({ navigate }) {
     };
 
     detectDevice();
-
     window.addEventListener("resize", detectDevice);
 
     return () => {
@@ -108,6 +183,7 @@ function Home({ navigate }) {
       fallback
     );
   };
+
   useEffect(() => {
     let active = true;
 
@@ -136,10 +212,15 @@ function Home({ navigate }) {
   }, []);
 
   return (
-    <main id="home" style={{ fontFamily: settings.global_body_font || "DM Sans", fontSize: `${settings.global_body_size || 14}px`, "--site-heading-font": settings.global_heading_font || "Manrope" }}>
+    <main
+      id="home"
+      style={{
+        fontFamily: settings.global_body_font || "DM Sans",
+        fontSize: `${settings.global_body_size || 14}px`,
+        "--site-heading-font": settings.global_heading_font || "Manrope"
+      }}
+    >
       <section className="hero">
-
-
         <div className="hero-image">
           <img
             src={settings.hero_image}
@@ -161,7 +242,6 @@ function Home({ navigate }) {
               {settings.hero_eyebrow ?? "WELCOME TO THE WORLD"}
             </p>
 
-
             <h1
               style={{
                 fontFamily: getDeviceSetting("title_font", "Manrope"),
@@ -172,11 +252,8 @@ function Home({ navigate }) {
                 top: `${getDeviceSetting("title_y", 45)}%`
               }}
             >
-
               {settings.hero_title}
-
             </h1>
-
 
             <p
               style={{
@@ -189,7 +266,6 @@ function Home({ navigate }) {
                 top: `${getDeviceSetting("subtitle_y", 70)}%`
               }}
             >
-
               {settings.hero_subtitle ?? "SIUUU"}
             </p>
           </div>
@@ -213,7 +289,10 @@ function Home({ navigate }) {
         <span>SCROLL TO DISCOVER ↓</span>
       </div>
 
-      {(Array.isArray(settings.section_content) ? settings.section_content : sections).map((item, index) => (
+      {(Array.isArray(settings.section_content)
+        ? settings.section_content
+        : sections
+      ).map((item, index) => (
         <SectionPreview
           key={item.id}
           item={item}
@@ -223,8 +302,7 @@ function Home({ navigate }) {
       ))}
 
       <section className="contact-band section-pad" id="contact">
-
-                <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
+        <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
 
         <div className="contact-row">
           <h2>
@@ -247,9 +325,6 @@ function Home({ navigate }) {
     </main>
   );
 }
-
-
-
 
 function DetailPage({ page, navigate }) {
   const item = sections.find((s) => s.id === page);
@@ -310,6 +385,7 @@ function DetailPage({ page, navigate }) {
   }
 
   const title = savedPage?.title || item?.title || page;
+
   const body =
     typeof savedPage?.content === "string"
       ? savedPage.content
@@ -380,40 +456,118 @@ function DetailPage({ page, navigate }) {
   );
 }
 
-
-
 function ContactPage({ navigate, contactEmail = "" }) {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
+
   async function submit(e) {
     e.preventDefault();
-    if (!supabase) { setStatus("Contact form will be activated when the Supabase connection is configured."); return; }
-    setSending(true); setStatus("");
+
+    if (!supabase) {
+      setStatus("Contact form will be activated when the Supabase connection is configured.");
+      return;
+    }
+
+    setSending(true);
+    setStatus("");
+
     try {
-      const { error } = await supabase.from("contact_messages").insert({
-        name: form.name, email: form.email, message: form.message
-      });
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert({
+          name: form.name,
+          email: form.email,
+          message: form.message
+        });
+
       if (error) throw error;
+
       setStatus("Thank you. Your message has been sent.");
-      setForm({ name: "", email: "", message: "" });
-    } catch (err) { setStatus("Message could not be sent. Please try again later."); }
-    finally { setSending(false); }
+      setForm({
+        name: "",
+        email: "",
+        message: ""
+      });
+    } catch (err) {
+      setStatus("Message could not be sent. Please try again later.");
+    } finally {
+      setSending(false);
+    }
   }
-  return <main className="detail-page contact-page">
-    <button className="back-link" onClick={() => navigate("home")}>← BACK TO HOME</button>
-    <p className="eyebrow">LET'S START A CONVERSATION</p>
-    <h1>Contact<span>.</span></h1>
-    <p className="detail-lead">Have a question, an idea or just want to say hello? Leave a message.{contactEmail && <> You can also email <a href={`mailto:${contactEmail}`}><u>{contactEmail}</u></a>.</>}</p>
-    <form className="contact-form" onSubmit={submit}>
-      <label>Your name<input required value={form.name} onChange={e => setForm({...form, name:e.target.value})} placeholder="Name"/></label>
-      <label>Email address<input required type="email" value={form.email} onChange={e => setForm({...form, email:e.target.value})} placeholder="you@example.com"/></label>
-      <label>Your message<textarea required rows="5" value={form.message} onChange={e => setForm({...form, message:e.target.value})} placeholder="Write something..."/></label>
-      <button className="submit-button" disabled={sending}>{sending ? "SENDING..." : "SEND MESSAGE"} <Arrow diagonal /></button>
-      {status && <p className="form-status">{status}</p>}
-    </form>
-  </main>;
+
+  return (
+    <main className="detail-page contact-page">
+      <button
+        className="back-link"
+        onClick={() => navigate("home")}
+      >
+        ← BACK TO HOME
+      </button>
+
+      <p className="eyebrow">LET'S START A CONVERSATION</p>
+      <h1>Contact<span>.</span></h1>
+
+      <p className="detail-lead">
+        Have a question, an idea or just want to say hello? Leave a message.
+        {contactEmail && (
+          <>
+            {" "}You can also email{" "}
+            <a href={`mailto:${contactEmail}`}>
+              <u>{contactEmail}</u>
+            </a>.
+          </>
+        )}
+      </p>
+
+      <form className="contact-form" onSubmit={submit}>
+        <label>
+          Your name
+          <input
+            required
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder="Name"
+          />
+        </label>
+
+        <label>
+          Email address
+          <input
+            required
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            placeholder="you@example.com"
+          />
+        </label>
+
+        <label>
+          Your message
+          <textarea
+            required
+            rows="5"
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+            placeholder="Write something..."
+          />
+        </label>
+
+        <button className="submit-button" disabled={sending}>
+          {sending ? "SENDING..." : "SEND MESSAGE"} <Arrow diagonal />
+        </button>
+
+        {status && <p className="form-status">{status}</p>}
+      </form>
+    </main>
+  );
 }
+
 function AdminLogin({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -493,6 +647,7 @@ function AdminLogin({ onLogin }) {
     <main className="detail-page">
       <p className="eyebrow">PRIVATE ACCESS</p>
       <h1>Admin<span>.</span></h1>
+
       <p className="detail-lead">
         Sign in to manage your personal website.
       </p>
@@ -504,7 +659,7 @@ function AdminLogin({ onLogin }) {
             type="email"
             required
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Your admin email"
           />
         </label>
@@ -515,7 +670,7 @@ function AdminLogin({ onLogin }) {
             type="password"
             required
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Your password"
           />
         </label>
@@ -540,7 +695,6 @@ function AdminLogin({ onLogin }) {
   );
 }
 
-
 function ResetPassword({ onDone }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -549,31 +703,75 @@ function ResetPassword({ onDone }) {
 
   async function submit(event) {
     event.preventDefault();
-    if (!supabase) return setStatus("Supabase connection is not configured.");
-    if (password.length < 8) return setStatus("Use at least 8 characters for your password.");
-    if (password !== confirmPassword) return setStatus("Passwords do not match.");
+
+    if (!supabase) {
+      return setStatus("Supabase connection is not configured.");
+    }
+
+    if (password.length < 8) {
+      return setStatus("Use at least 8 characters for your password.");
+    }
+
+    if (password !== confirmPassword) {
+      return setStatus("Passwords do not match.");
+    }
+
     setLoading(true);
     setStatus("");
+
     const { error } = await supabase.auth.updateUser({ password });
+
     setLoading(false);
-    if (error) return setStatus(error.message);
+
+    if (error) {
+      return setStatus(error.message);
+    }
+
     setStatus("Password updated successfully.");
     setTimeout(onDone, 900);
   }
 
-  return <main className="detail-page">
-    <p className="eyebrow">ACCOUNT SECURITY</p>
-    <h1>New password<span>.</span></h1>
-    <p className="detail-lead">Choose a new password for your admin account.</p>
-    <form className="contact-form" onSubmit={submit}>
-      <label>New password<input type="password" minLength={8} required value={password} onChange={e => setPassword(e.target.value)} /></label>
-      <label>Confirm password<input type="password" minLength={8} required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} /></label>
-      <button className="submit-button" disabled={loading}>{loading ? "UPDATING..." : "UPDATE PASSWORD"} <Arrow diagonal /></button>
-      {status && <p className="form-status">{status}</p>}
-    </form>
-  </main>;
-}
+  return (
+    <main className="detail-page">
+      <p className="eyebrow">ACCOUNT SECURITY</p>
+      <h1>New password<span>.</span></h1>
 
+      <p className="detail-lead">
+        Choose a new password for your admin account.
+      </p>
+
+      <form className="contact-form" onSubmit={submit}>
+        <label>
+          New password
+          <input
+            type="password"
+            minLength={8}
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+
+        <label>
+          Confirm password
+          <input
+            type="password"
+            minLength={8}
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </label>
+
+        <button className="submit-button" disabled={loading}>
+          {loading ? "UPDATING..." : "UPDATE PASSWORD"} <Arrow diagonal />
+        </button>
+
+        {status && <p className="form-status">{status}</p>}
+      </form>
+    </main>
+  );
+}
 function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState("Overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -598,224 +796,289 @@ function AdminDashboard({ onLogout }) {
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [messagesStatus, setMessagesStatus] = useState("");
 
-const [homeSettings, setHomeSettings] = useState({
-  hero_title: "AL MUBIN",
-  hero_subtitle: "SIUUU",
-  hero_eyebrow: "WELCOME TO THE WORLD",
+  const [homeSettings, setHomeSettings] = useState({
+    hero_title: "AL MUBIN",
+    hero_subtitle: "SIUUU",
+    hero_eyebrow: "WELCOME TO THE WORLD",
+    hero_image:
+      "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
 
-  hero_image:
-    "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
+    eyebrow_size: 14,
+    eyebrow_color: "#ffffff",
+    eyebrow_font: "DM Sans",
+    eyebrow_x: 8,
+    eyebrow_y: 30,
 
-  eyebrow_size: 14,
-  eyebrow_color: "#ffffff",
-  eyebrow_font: "DM Sans",
-  eyebrow_x: 8,
-  eyebrow_y: 30,
+    title_size: 150,
+    title_color: "#ffffff",
+    title_font: "Manrope",
+    title_x: 8,
+    title_y: 45,
 
-  title_size: 150,
-  title_color: "#ffffff",
-  title_font: "Manrope",
-  title_x: 8,
-  title_y: 45,
+    subtitle_size: 24,
+    subtitle_color: "#ffffff",
+    subtitle_font: "DM Sans",
+    subtitle_x: 8,
+    subtitle_y: 70,
 
-  subtitle_size: 24,
-  subtitle_color: "#ffffff",
-  subtitle_font: "DM Sans",
-  subtitle_x: 8,
-  subtitle_y: 70,
+    intro_heading: "Not just a website. A little world of my own.",
+    intro_description:
+      "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
+  });
 
-  intro_heading: "Not just a website. A little world of my own.",
-  intro_description:
-    "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
-});
+  const [homeEditorDevice, setHomeEditorDevice] = useState("desktop");
 
+  const deviceSpecificHomeSettings = [
+    "eyebrow_size",
+    "eyebrow_color",
+    "eyebrow_font",
+    "eyebrow_x",
+    "eyebrow_y",
+    "title_size",
+    "title_color",
+    "title_font",
+    "title_x",
+    "title_y",
+    "subtitle_size",
+    "subtitle_color",
+    "subtitle_font",
+    "subtitle_x",
+    "subtitle_y"
+  ];
 
-const [homeEditorDevice, setHomeEditorDevice] = useState("desktop");
+  const updateHomeSetting = (key, value) => {
+    const deviceSpecific = deviceSpecificHomeSettings.includes(key);
+    const settingKey = deviceSpecific
+      ? `${homeEditorDevice}_${key}`
+      : key;
 
-
-
-const deviceSpecificHomeSettings = [
-  "eyebrow_size",
-  "eyebrow_color",
-  "eyebrow_font",
-  "eyebrow_x",
-  "eyebrow_y",
-  "title_size",
-  "title_color",
-  "title_font",
-  "title_x",
-  "title_y",
-  "subtitle_size",
-  "subtitle_color",
-  "subtitle_font",
-  "subtitle_x",
-  "subtitle_y"
-];
-
-const updateHomeSetting = (key, value) => {
-  const deviceSpecific = deviceSpecificHomeSettings.includes(key);
-  const settingKey = deviceSpecific
-    ? `${homeEditorDevice}_${key}`
-    : key;
-
-  setHomeSettings((prev) => ({
-    ...prev,
-    [settingKey]: value
-  }));
-};
-
-const getHomeSetting = (key, fallback) => {
-  return (
-    homeSettings[`${homeEditorDevice}_${key}`] ??
-    homeSettings[key] ??
-    fallback
-  );
-};
-
-
-const [homeLoading, setHomeLoading] = useState(false);
-const [homeSaving, setHomeSaving] = useState(false);
-const [homeMessage, setHomeMessage] = useState("");
-
-
- const menuItems = [
-  { name: "Overview", icon: "⌂" },
-  { name: "Page Editor", icon: "▤" },
-  { name: "Home Page Editor", icon: "⌂" },
-  { name: "Typography", icon: "T" },
-  { name: "Image Editor", icon: "▧" },
-  { name: "Media Library", icon: "▦" },
-  { name: "Messages", icon: "✉" },
-  { name: "Settings", icon: "⚙" }
-];
-
- async function loadHomeSettings() {
-  if (!supabase) {
-    setHomeMessage("Supabase connection is not configured.");
-    return;
-  }
-
-  setHomeLoading(true);
-  setHomeMessage("");
-
-  const { data, error } = await supabase
-    .from("site_settings")
-    .select("header")
-    .eq("id", 1)
-    .single();
-
-  if (error) {
-    setHomeMessage(error.message);
-  } else if (data && data.header) {
-    setHomeSettings((previous) => ({
-      ...previous,
-      ...data.header
+    setHomeSettings((prev) => ({
+      ...prev,
+      [settingKey]: value
     }));
-  }
+  };
 
-  setHomeLoading(false);
-}
+  const getHomeSetting = (key, fallback) => {
+    return (
+      homeSettings[`${homeEditorDevice}_${key}`] ??
+      homeSettings[key] ??
+      fallback
+    );
+  };
+
+  const [homeLoading, setHomeLoading] = useState(false);
+  const [homeSaving, setHomeSaving] = useState(false);
+  const [homeMessage, setHomeMessage] = useState("");
+
+  const menuItems = [
+    { name: "Overview", icon: "⌂" },
+    { name: "Page Editor", icon: "▤" },
+    { name: "Home Page Editor", icon: "⌂" },
+    { name: "Typography", icon: "T" },
+    { name: "Image Editor", icon: "▧" },
+    { name: "Media Library", icon: "▦" },
+    { name: "Messages", icon: "✉" },
+    { name: "Settings", icon: "⚙" }
+  ];
+
+  async function loadHomeSettings() {
+    if (!supabase) {
+      setHomeMessage("Supabase connection is not configured.");
+      return;
+    }
+
+    setHomeLoading(true);
+    setHomeMessage("");
+
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("header")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      setHomeMessage(error.message);
+    } else if (data && data.header) {
+      setHomeSettings((previous) => ({
+        ...previous,
+        ...data.header
+      }));
+    }
+
+    setHomeLoading(false);
+  }
 
   async function saveHomeSettings() {
-  if (!supabase) {
-    setHomeMessage("Supabase connection is not configured.");
-    return;
+    if (!supabase) {
+      setHomeMessage("Supabase connection is not configured.");
+      return;
+    }
+
+    setHomeSaving(true);
+    setHomeMessage("");
+
+    const { error } = await supabase
+      .from("site_settings")
+      .update({
+        header: homeSettings
+      })
+      .eq("id", 1);
+
+    setHomeSaving(false);
+
+    if (error) {
+      setHomeMessage(error.message);
+      return;
+    }
+
+    setHomeMessage("Home page settings saved successfully.");
   }
 
-  setHomeSaving(true);
-  setHomeMessage("");
-
-  const { error } = await supabase
-    .from("site_settings")
-    .update({
-      header: homeSettings
-    })
-    .eq("id", 1);
-
-  setHomeSaving(false);
-
-  if (error) {
-    setHomeMessage(error.message);
-    return;
-  }
-
-  setHomeMessage("Home page settings saved successfully.");
-}
   async function loadMedia() {
-    if (!supabase) return setMediaMessage("Supabase connection is not configured.");
+    if (!supabase) {
+      return setMediaMessage("Supabase connection is not configured.");
+    }
+
     setMediaLoading(true);
     setMediaMessage("");
-    const { data, error } = await supabase.storage.from("site-media").list("", {
-      limit: 100,
-      sortBy: { column: "created_at", order: "desc" }
-    });
+
+    const { data, error } = await supabase.storage
+      .from("site-media")
+      .list("", {
+        limit: 100,
+        sortBy: { column: "created_at", order: "desc" }
+      });
+
     setMediaLoading(false);
+
     if (error) return setMediaMessage(error.message);
-    setMediaFiles((data || []).filter(file => file.name !== ".emptyFolderPlaceholder"));
+
+    setMediaFiles(
+      (data || []).filter(
+        (file) => file.name !== ".emptyFolderPlaceholder"
+      )
+    );
   }
 
   async function uploadMedia(event) {
     const files = Array.from(event.target.files || []);
+
     if (!files.length || !supabase) return;
+
     setMediaUploading(true);
     setMediaMessage("");
+
     let uploaded = 0;
+
     for (const file of files) {
       const safeName = file.name.trim().replace(/[^a-zA-Z0-9._-]/g, "-");
       const path = `${Date.now()}-${safeName}`;
-      const { error } = await supabase.storage.from("site-media").upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
-        contentType: file.type || undefined
-      });
+
+      const { error } = await supabase.storage
+        .from("site-media")
+        .upload(path, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type || undefined
+        });
+
       if (error) {
         setMediaMessage(error.message);
         break;
       }
+
       uploaded += 1;
     }
+
     setMediaUploading(false);
-    if (uploaded) setMediaMessage(`${uploaded} file(s) uploaded successfully.`);
+
+    if (uploaded) {
+      setMediaMessage(`${uploaded} file(s) uploaded successfully.`);
+    }
+
     event.target.value = "";
     await loadMedia();
   }
 
   async function deleteMedia(fileName) {
     if (!supabase) return;
-    if (!window.confirm(`Delete ${fileName}? This cannot be undone.`)) return;
-    const { error } = await supabase.storage.from("site-media").remove([fileName]);
+
+    if (!window.confirm(`Delete ${fileName}? This cannot be undone.`)) {
+      return;
+    }
+
+    const { error } = await supabase.storage
+      .from("site-media")
+      .remove([fileName]);
+
     if (error) return setMediaMessage(error.message);
+
     setMediaMessage("File deleted.");
     await loadMedia();
   }
 
   function getMediaUrl(fileName) {
-    return supabase?.storage.from("site-media").getPublicUrl(fileName)?.data?.publicUrl || "";
+    return (
+      supabase?.storage.from("site-media").getPublicUrl(fileName)?.data
+        ?.publicUrl || ""
+    );
   }
 
   async function loadMessages() {
-    if (!supabase) return setMessagesStatus("Supabase connection is not configured.");
+    if (!supabase) {
+      return setMessagesStatus("Supabase connection is not configured.");
+    }
+
     setMessagesLoading(true);
     setMessagesStatus("");
-    const { data, error } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(100);
+
+    const { data, error } = await supabase
+      .from("contact_messages")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100);
+
     setMessagesLoading(false);
+
     if (error) return setMessagesStatus(error.message);
+
     setContactMessages(data || []);
   }
 
   async function deleteMessage(messageId) {
-    if (!supabase || !window.confirm("Delete this message permanently?")) return;
-    const { error } = await supabase.from("contact_messages").delete().eq("id", messageId);
+    if (
+      !supabase ||
+      !window.confirm("Delete this message permanently?")
+    ) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from("contact_messages")
+      .delete()
+      .eq("id", messageId);
+
     if (error) return setMessagesStatus(error.message);
+
     setMessagesStatus("Message deleted.");
     await loadMessages();
   }
 
   function updateSection(index, key, value) {
-    setHomeSettings(previous => {
-      const current = Array.isArray(previous.section_content) ? [...previous.section_content] : sections.map(item => ({ ...item }));
-      current[index] = { ...current[index], [key]: value };
-      return { ...previous, section_content: current };
+    setHomeSettings((previous) => {
+      const current = Array.isArray(previous.section_content)
+        ? [...previous.section_content]
+        : sections.map((item) => ({ ...item }));
+
+      current[index] = {
+        ...current[index],
+        [key]: value
+      };
+
+      return {
+        ...previous,
+        section_content: current
+      };
     });
   }
 
@@ -843,22 +1106,34 @@ const [homeMessage, setHomeMessage] = useState("");
     setPages(data || []);
   }
 
- useEffect(() => {
-  if (activeTab === "Overview" || activeTab === "Page Editor") loadPages();
-  if (["Home Page Editor", "Typography", "Image Editor", "Settings"].includes(activeTab)) loadHomeSettings();
-  if (activeTab === "Media Library") loadMedia();
-  if (activeTab === "Messages") loadMessages();
-}, [activeTab]);
+  useEffect(() => {
+    if (activeTab === "Overview" || activeTab === "Page Editor") {
+      loadPages();
+    }
+
+    if (
+      ["Home Page Editor", "Typography", "Image Editor", "Settings"].includes(
+        activeTab
+      )
+    ) {
+      loadHomeSettings();
+    }
+
+    if (activeTab === "Media Library") loadMedia();
+    if (activeTab === "Messages") loadMessages();
+  }, [activeTab]);
 
   function selectPage(page) {
     setSelectedPage(page);
     setEditorTitle(page.title || "");
     setEditorSlug(page.slug || "");
+
     setEditorContent(
       typeof page.content?.body === "string"
         ? page.content.body
         : ""
     );
+
     setEditorStatus(page.status || "draft");
     setEditorMessage("");
   }
@@ -871,7 +1146,7 @@ const [homeMessage, setHomeMessage] = useState("");
     setEditorStatus("draft");
     setEditorMessage("Create a new page.");
   }
-  
+
   async function savePage() {
     if (!supabase) {
       setEditorMessage("Supabase connection is not configured.");
@@ -946,8 +1221,223 @@ const [homeMessage, setHomeMessage] = useState("");
     await loadPages();
   }
 
-    return (
+  return (
     <div className="cms-layout">
+      <aside className={`cms-sidebar ${sidebarOpen ? "" : "collapsed"}`}>
+        <div className="cms-brand">
+          <span>AM.</span>
+          {sidebarOpen && <small>STUDIO</small>}
+        </div>
+
+        <button
+          type="button"
+          className="cms-toggle"
+          onClick={() => setSidebarOpen((open) => !open)}
+          aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          {sidebarOpen ? "←" : "→"}
+        </button>
+
+        <nav className="cms-nav">
+          {menuItems.map((item) => (
+            <button
+              type="button"
+              key={item.name}
+              className={`cms-nav-item ${activeTab === item.name ? "active" : ""}`}
+              onClick={() => setActiveTab(item.name)}
+            >
+              <span className="cms-nav-icon">{item.icon}</span>
+              {sidebarOpen && <span>{item.name}</span>}
+            </button>
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          className="cms-logout-button"
+          onClick={onLogout}
+        >
+          {sidebarOpen ? "LOG OUT ↗" : "↗"}
+        </button>
+      </aside>
+
+      <main className="cms-main">
+        <div className="cms-topbar">
+          <div>
+            <p className="cms-eyebrow">AL MUBIN / ADMINISTRATION</p>
+            <h1>{activeTab}</h1>
+          </div>
+
+          <button
+            type="button"
+            className="cms-secondary-button"
+            onClick={onLogout}
+          >
+            LOG OUT
+          </button>
+        </div>
+
+        {activeTab === "Overview" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">WELCOME BACK</p>
+                <h2>Your website, at a glance.</h2>
+                <p>
+                  Manage your pages, homepage, media and messages from here.
+                </p>
+              </div>
+            </div>
+
+            <div className="cms-overview-grid">
+              <article className="cms-overview-card">
+                <span>TOTAL PAGES</span>
+                <strong>{pages.length}</strong>
+              </article>
+
+              <article className="cms-overview-card">
+                <span>PUBLISHED PAGES</span>
+                <strong>
+                  {pages.filter((page) => page.status === "published").length}
+                </strong>
+              </article>
+
+              <article className="cms-overview-card">
+                <span>MEDIA FILES</span>
+                <strong>{mediaFiles.length}</strong>
+              </article>
+
+              <article className="cms-overview-card">
+                <span>MESSAGES</span>
+                <strong>{contactMessages.length}</strong>
+              </article>
+            </div>
+
+            <div className="cms-edit-panel">
+              <div className="cms-list-heading">
+                <strong>QUICK ACTIONS</strong>
+                <span>01</span>
+              </div>
+
+              <div className="cms-quick-actions">
+                <button
+                  type="button"
+                  className="cms-secondary-button"
+                  onClick={() => setActiveTab("Page Editor")}
+                >
+                  MANAGE PAGES ↗
+                </button>
+
+                <button
+                  type="button"
+                  className="cms-secondary-button"
+                  onClick={() => setActiveTab("Home Page Editor")}
+                >
+                  EDIT HOMEPAGE ↗
+                </button>
+
+                <button
+                  type="button"
+                  className="cms-secondary-button"
+                  onClick={() => setActiveTab("Media Library")}
+                >
+                  OPEN MEDIA LIBRARY ↗
+                </button>
+
+                <button
+                  type="button"
+                  className="cms-secondary-button"
+                  onClick={() => setActiveTab("Messages")}
+                >
+                  VIEW MESSAGES ↗
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {activeTab === "Page Editor" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">CONTENT MANAGEMENT</p>
+                <h2>Manage your pages.</h2>
+                <p>Create, edit and publish pages on your website.</p>
+              </div>
+
+              <button
+                type="button"
+                className="cms-save-button"
+                onClick={createNewPage}
+              >
+                + NEW PAGE
+              </button>
+            </div>
+
+            <div className="cms-page-editor-layout">
+              <div className="cms-page-list">
+                <div className="cms-list-heading">
+                  <strong>YOUR PAGES</strong>
+                  <span>{pages.length.toString().padStart(2, "0")}</span>
+                </div>
+
+                {loadingPages ? (
+                  <p className="cms-editor-note">Loading pages...</p>
+                ) : pages.length === 0 ? (
+                  <p className="cms-editor-note">
+                    No pages yet. Create your first page.
+                  </p>
+                ) : (
+                  pages.map((page) => (
+                    <button
+                      type="button"
+                      key={page.id}
+                      className={`cms-page-item ${selectedPage?.id === page.id ? "active" : ""}`}
+                      onClick={() => selectPage(page)}
+                    >
+                      <span>{page.title}</span>
+                      <small>{page.status || "draft"}</small>
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <div className="cms-edit-panel">
+                <div className="cms-list-heading">
+                  <strong>{selectedPage ? "EDIT PAGE" : "CREATE PAGE"}</strong>
+                  <span>{selectedPage ? "02" : "01"}</span>
+                </div>
+
+                <label className="cms-field">
+                  Page Title
+                  <input
+                    type="text"
+                    value={editorTitle}
+                    onChange={(e) => setEditorTitle(e.target.value)}
+                    placeholder="e.g. About me"
+                  />
+                </label>
+
+                <label className="cms-field">
+                  Page Slug
+                  <input
+                    type="text"
+                    value={editorSlug}
+                    onChange={(e) => setEditorSlug(e.target.value)}
+                    placeholder="e.g. about-me"
+                  />
+                </label>
+
+                <label className="cms-field">
+                  Page Content
+                  <textarea
+                    rows={14}
+                    value={editorContent}
+                    onChange={(e) => setEditorContent(e.target.value)}
+                    placeholder="Write your page content here..."
+                  />
+                </label>
+
                 <label className="cms-field">
                   Status
                   <select
@@ -955,7 +1445,8 @@ const [homeMessage, setHomeMessage] = useState("");
                     onChange={(e) => setEditorStatus(e.target.value)}
                   >
                     <option value="draft">Draft</option>
-                    <option value="published">Published</option>
+
+                                        <option value="published">Published</option>
                   </select>
                 </label>
 
@@ -967,7 +1458,16 @@ const [homeMessage, setHomeMessage] = useState("");
                   {saving ? "SAVING..." : "SAVE PAGE ↗"}
                 </button>
 
-                {selectedPage && <button type="button" className="cms-delete-button" onClick={deletePage} disabled={saving}>DELETE PAGE</button>}
+                {selectedPage && (
+                  <button
+                    type="button"
+                    className="cms-delete-button"
+                    onClick={deletePage}
+                    disabled={saving}
+                  >
+                    DELETE PAGE
+                  </button>
+                )}
 
                 {editorMessage && (
                   <p className="cms-editor-message">{editorMessage}</p>
@@ -977,424 +1477,735 @@ const [homeMessage, setHomeMessage] = useState("");
           </section>
         )}
 
+        {activeTab === "Home Page Editor" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">HOMEPAGE MANAGEMENT</p>
+                <h2>Edit your homepage.</h2>
+                <p>Customise every element of your hero section.</p>
+              </div>
+            </div>
 
-{activeTab === "Home Page Editor" && (
-  <section className="cms-content">
-    <div className="cms-editor-heading">
-      <div>
-        <p className="cms-eyebrow">HOMEPAGE MANAGEMENT</p>
-        <h2>Edit your homepage.</h2>
-        <p>Customise every element of your hero section.</p>
-      </div>
-    </div>
+            <div className="home-device-tabs">
+              <button
+                type="button"
+                className={homeEditorDevice === "desktop" ? "active" : ""}
+                onClick={() => setHomeEditorDevice("desktop")}
+              >
+                Desktop
+              </button>
 
-    <div className="home-device-tabs">
-      <button
-        type="button"
-        className={homeEditorDevice === "desktop" ? "active" : ""}
-        onClick={() => setHomeEditorDevice("desktop")}
-      >
-        Desktop
-      </button>
+              <button
+                type="button"
+                className={homeEditorDevice === "ipad" ? "active" : ""}
+                onClick={() => setHomeEditorDevice("ipad")}
+              >
+                iPad
+              </button>
 
-      <button
-        type="button"
-        className={homeEditorDevice === "ipad" ? "active" : ""}
-        onClick={() => setHomeEditorDevice("ipad")}
-      >
-        iPad
-      </button>
+              <button
+                type="button"
+                className={homeEditorDevice === "mobile" ? "active" : ""}
+                onClick={() => setHomeEditorDevice("mobile")}
+              >
+                Mobile
+              </button>
+            </div>
 
-      <button
-        type="button"
-        className={homeEditorDevice === "mobile" ? "active" : ""}
-        onClick={() => setHomeEditorDevice("mobile")}
-      >
-        Mobile
-      </button>
-    </div>
+            <div className="cms-edit-panel">
+              <div className="cms-list-heading">
+                <strong>Hero Background</strong>
+                <span>01</span>
+              </div>
 
-    <div className="cms-edit-panel">
-      <div className="cms-list-heading">
-        <strong>Hero Background</strong>
-        <span>01</span>
-      </div>
+              <label className="cms-field">
+                Hero Image URL
+                <input
+                  type="url"
+                  value={homeSettings.hero_image ?? ""}
+                  onChange={(e) =>
+                    updateHomeSetting("hero_image", e.target.value)
+                  }
+                  placeholder="https://..."
+                />
+              </label>
 
-      <label className="cms-field">Hero Image URL<input type="url" value={homeSettings.hero_image ?? ""} onChange={e => updateHomeSetting("hero_image", e.target.value)} placeholder="https://..." /></label>
-      {homeSettings.hero_image && <img className="cms-image-preview" src={homeSettings.hero_image} alt="Hero preview" />}
+              {homeSettings.hero_image && (
+                <img
+                  className="cms-image-preview"
+                  src={homeSettings.hero_image}
+                  alt="Hero preview"
+                />
+              )}
 
+              <div className="cms-list-heading">
+                <strong>Welcome Text</strong>
+                <span>02</span>
+              </div>
 
-      <div className="cms-list-heading">
-        <strong>Welcome Text</strong>
-        <span>02</span>
-      </div>
+              <label className="cms-field">
+                Text
+                <input
+                  value={homeSettings.hero_eyebrow ?? ""}
+                  onChange={(e) =>
+                    updateHomeSetting("hero_eyebrow", e.target.value)
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Text
-        <input
-          value={homeSettings.hero_eyebrow ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("hero_eyebrow", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Font
+                <select
+                  value={getHomeSetting("eyebrow_font", "DM Sans")}
+                  onChange={(e) =>
+                    updateHomeSetting("eyebrow_font", e.target.value)
+                  }
+                >
+                  <option>DM Sans</option>
+                  <option>Manrope</option>
+                  <option>Arial</option>
+                  <option>Georgia</option>
+                  <option>Playfair Display</option>
+                </select>
+              </label>
 
-      <label className="cms-field">
-        Font
-        <select
-          value={getHomeSetting("eyebrow_font", "DM Sans")}
-          onChange={(e) =>
-            updateHomeSetting("eyebrow_font", e.target.value)
-          }
-        >
-          <option>DM Sans</option>
-          <option>Manrope</option>
-          <option>Arial</option>
-          <option>Georgia</option>
-          <option>Playfair Display</option>
-        </select>
-      </label>
+              <label className="cms-field">
+                Font Size: {getHomeSetting("eyebrow_size", 14)}px
+                <input
+                  type="range"
+                  min="10"
+                  max="60"
+                  value={getHomeSetting("eyebrow_size", 14)}
+                  onChange={(e) =>
+                    updateHomeSetting("eyebrow_size", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Font Size: {getHomeSetting("eyebrow_size", 14)}px
-        <input
-          type="range"
-          min="10"
-          max="60"
-          value={getHomeSetting("eyebrow_size", 14)}
-          onChange={(e) =>
-            updateHomeSetting("eyebrow_size", Number(e.target.value))
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Text Colour
+                <input
+                  type="color"
+                  value={getHomeSetting("eyebrow_color", "#ffffff")}
+                  onChange={(e) =>
+                    updateHomeSetting("eyebrow_color", e.target.value)
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Text Colour
-        <input
-          type="color"
-          value={getHomeSetting("eyebrow_color", "#ffffff")}
-          onChange={(e) =>
-            updateHomeSetting("eyebrow_color", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Horizontal Position: {getHomeSetting("eyebrow_x", 8)}%
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  value={getHomeSetting("eyebrow_x", 8)}
+                  onChange={(e) =>
+                    updateHomeSetting("eyebrow_x", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Horizontal Position: {getHomeSetting("eyebrow_x", 8)}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={getHomeSetting("eyebrow_x", 8)}
-          onChange={(e) =>
-            updateHomeSetting("eyebrow_x", Number(e.target.value))
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Vertical Position: {getHomeSetting("eyebrow_y", 30)}%
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  value={getHomeSetting("eyebrow_y", 30)}
+                  onChange={(e) =>
+                    updateHomeSetting("eyebrow_y", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Vertical Position: {getHomeSetting("eyebrow_y", 30)}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={getHomeSetting("eyebrow_y", 30)}
-          onChange={(e) =>
-            updateHomeSetting("eyebrow_y", Number(e.target.value))
-          }
-        />
-      </label>
+              <div className="cms-list-heading">
+                <strong>AL MUBIN Title</strong>
+                <span>03</span>
+              </div>
 
+              <label className="cms-field">
+                Title
+                <input
+                  value={homeSettings.hero_title ?? ""}
+                  onChange={(e) =>
+                    updateHomeSetting("hero_title", e.target.value)
+                  }
+                />
+              </label>
 
-      <div className="cms-list-heading">
-        <strong>AL MUBIN Title</strong>
-        <span>03</span>
-      </div>
+              <label className="cms-field">
+                Font
+                <select
+                  value={getHomeSetting("title_font", "Manrope")}
+                  onChange={(e) =>
+                    updateHomeSetting("title_font", e.target.value)
+                  }
+                >
+                  <option>Manrope</option>
+                  <option>DM Sans</option>
+                  <option>Arial</option>
+                  <option>Georgia</option>
+                  <option>Playfair Display</option>
+                </select>
+              </label>
 
-      <label className="cms-field">
-        Title
-        <input
-          value={homeSettings.hero_title ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("hero_title", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Font Size: {getHomeSetting("title_size", 150)}px
+                <input
+                  type="range"
+                  min="40"
+                  max="210"
+                  value={getHomeSetting("title_size", 150)}
+                  onChange={(e) =>
+                    updateHomeSetting("title_size", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Font
-        <select
-          value={getHomeSetting("title_font", "Manrope")}
-          onChange={(e) =>
-            updateHomeSetting("title_font", e.target.value)
-          }
-        >
-          <option>Manrope</option>
-          <option>DM Sans</option>
-          <option>Arial</option>
-          <option>Georgia</option>
-          <option>Playfair Display</option>
-        </select>
-      </label>
+              <label className="cms-field">
+                Text Colour
+                <input
+                  type="color"
+                  value={getHomeSetting("title_color", "#ffffff")}
+                  onChange={(e) =>
+                    updateHomeSetting("title_color", e.target.value)
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Font Size: {getHomeSetting("title_size", 150)}px
-        <input
-          type="range"
-          min="40"
-          max="210"
-          value={getHomeSetting("title_size", 150)}
-          onChange={(e) =>
-            updateHomeSetting("title_size", Number(e.target.value))
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Horizontal Position: {getHomeSetting("title_x", 8)}%
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  value={getHomeSetting("title_x", 8)}
+                  onChange={(e) =>
+                    updateHomeSetting("title_x", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Text Colour
-        <input
-          type="color"
-          value={getHomeSetting("title_color", "#ffffff")}
-          onChange={(e) =>
-            updateHomeSetting("title_color", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Vertical Position: {getHomeSetting("title_y", 45)}%
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  value={getHomeSetting("title_y", 45)}
+                  onChange={(e) =>
+                    updateHomeSetting("title_y", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Horizontal Position: {getHomeSetting("title_x", 8)}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={getHomeSetting("title_x", 8)}
-          onChange={(e) =>
-            updateHomeSetting("title_x", Number(e.target.value))
-          }
-        />
-      </label>
+              <div className="cms-list-heading">
+                <strong>SIUUU Subtitle</strong>
+                <span>04</span>
+              </div>
 
-      <label className="cms-field">
-        Vertical Position: {getHomeSetting("title_y", 45)}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={getHomeSetting("title_y", 45)}
-          onChange={(e) =>
-            updateHomeSetting("title_y", Number(e.target.value))
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Subtitle
+                <textarea
+                  rows={3}
+                  value={homeSettings.hero_subtitle ?? ""}
+                  onChange={(e) =>
+                    updateHomeSetting("hero_subtitle", e.target.value)
+                  }
+                />
+              </label>
 
+              <label className="cms-field">
+                Font
+                <select
+                  value={getHomeSetting("subtitle_font", "DM Sans")}
+                  onChange={(e) =>
+                    updateHomeSetting("subtitle_font", e.target.value)
+                  }
+                >
+                  <option>DM Sans</option>
+                  <option>Manrope</option>
+                  <option>Arial</option>
+                  <option>Georgia</option>
+                  <option>Playfair Display</option>
+                </select>
+              </label>
 
+              <label className="cms-field">
+                Font Size: {getHomeSetting("subtitle_size", 24)}px
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  value={getHomeSetting("subtitle_size", 24)}
+                  onChange={(e) =>
+                    updateHomeSetting("subtitle_size", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <div className="cms-list-heading">
-        <strong>SIUUU Subtitle</strong>
-        <span>04</span>
-      </div>
+              <label className="cms-field">
+                Text Colour
+                <input
+                  type="color"
+                  value={getHomeSetting("subtitle_color", "#ffffff")}
+                  onChange={(e) =>
+                    updateHomeSetting("subtitle_color", e.target.value)
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Subtitle
-        <textarea
-          rows={3}
-          value={homeSettings.hero_subtitle ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("hero_subtitle", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Horizontal Position: {getHomeSetting("subtitle_x", 8)}%
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  value={getHomeSetting("subtitle_x", 8)}
+                  onChange={(e) =>
+                    updateHomeSetting("subtitle_x", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Font
-        <select
-          value={getHomeSetting("subtitle_font", "DM Sans")}
-          onChange={(e) =>
-            updateHomeSetting("subtitle_font", e.target.value)
-          }
-        >
-          <option>DM Sans</option>
-          <option>Manrope</option>
-          <option>Arial</option>
-          <option>Georgia</option>
-          <option>Playfair Display</option>
-        </select>
-      </label>
+              <label className="cms-field">
+                Vertical Position: {getHomeSetting("subtitle_y", 70)}%
+                <input
+                  type="range"
+                  min="0"
+                  max="90"
+                  value={getHomeSetting("subtitle_y", 70)}
+                  onChange={(e) =>
+                    updateHomeSetting("subtitle_y", Number(e.target.value))
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Font Size: {getHomeSetting("subtitle_size", 24)}px
-        <input
-          type="range"
-          min="10"
-          max="100"
-          value={getHomeSetting("subtitle_size", 24)}
-          onChange={(e) =>
-            updateHomeSetting("subtitle_size", Number(e.target.value))
-          }
-        />
-      </label>
+              <div className="cms-list-heading">
+                <strong>Introduction Section</strong>
+                <span>05</span>
+              </div>
 
-      <label className="cms-field">
-        Text Colour
-        <input
-          type="color"
-          value={getHomeSetting("subtitle_color", "#ffffff")}
-          onChange={(e) =>
-            updateHomeSetting("subtitle_color", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Intro Heading
+                <textarea
+                  rows={3}
+                  value={homeSettings.intro_heading ?? ""}
+                  onChange={(e) =>
+                    updateHomeSetting("intro_heading", e.target.value)
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Horizontal Position: {getHomeSetting("subtitle_x", 8)}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={getHomeSetting("subtitle_x", 8)}
-          onChange={(e) =>
-            updateHomeSetting("subtitle_x", Number(e.target.value))
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Intro Description
+                <textarea
+                  rows={4}
+                  value={homeSettings.intro_description ?? ""}
+                  onChange={(e) =>
+                    updateHomeSetting("intro_description", e.target.value)
+                  }
+                />
+              </label>
 
-      <label className="cms-field">
-        Vertical Position: {getHomeSetting("subtitle_y", 70)}%
-        <input
-          type="range"
-          min="0"
-          max="90"
-          value={getHomeSetting("subtitle_y", 70)}
-          onChange={(e) =>
-            updateHomeSetting("subtitle_y", Number(e.target.value))
-          }
-        />
-      </label>
+              <button
+                className="cms-save-button"
+                onClick={saveHomeSettings}
+                disabled={homeSaving || homeLoading}
+              >
+                {homeLoading
+                  ? "LOADING..."
+                  : homeSaving
+                  ? "SAVING..."
+                  : "SAVE HOMEPAGE ↗"}
+              </button>
 
+              {homeMessage && (
+                <p className="cms-editor-message">{homeMessage}</p>
+              )}
+            </div>
+          </section>
+        )}
 
-      <div className="cms-list-heading">
-        <strong>Introduction Section</strong>
-        <span>05</span>
-      </div>
+        {activeTab === "Typography" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">DESIGN SYSTEM</p>
+                <h2>Typography settings.</h2>
+                <p>Set the site-wide heading and body fonts.</p>
+              </div>
+            </div>
 
-      <label className="cms-field">
-        Intro Heading
-        <textarea
-          rows={3}
-          value={homeSettings.intro_heading ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("intro_heading", e.target.value)
-          }
-        />
-      </label>
+            <div className="cms-edit-panel">
+              <label className="cms-field">
+                Heading font
+                <select
+                  value={homeSettings.global_heading_font || "Manrope"}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      global_heading_font: e.target.value
+                    }))
+                  }
+                >
+                  {["Manrope", "DM Sans", "Arial", "Georgia", "Playfair Display"].map((x) => (
+                    <option key={x}>{x}</option>
+                  ))}
+                </select>
+              </label>
 
-      <label className="cms-field">
-        Intro Description
-        <textarea
-          rows={4}
-          value={homeSettings.intro_description ?? ""}
-          onChange={(e) =>
-            updateHomeSetting("intro_description", e.target.value)
-          }
-        />
-      </label>
+              <label className="cms-field">
+                Body font
+                <select
+                  value={homeSettings.global_body_font || "DM Sans"}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      global_body_font: e.target.value
+                    }))
+                  }
+                >
+                  {["DM Sans", "Manrope", "Arial", "Georgia", "Playfair Display"].map((x) => (
+                    <option key={x}>{x}</option>
+                  ))}
+                </select>
+              </label>
 
-      <button
-        className="cms-save-button"
-        onClick={saveHomeSettings}
-        disabled={homeSaving || homeLoading}
-      >
-        {homeLoading
-          ? "LOADING..."
-          : homeSaving
-          ? "SAVING..."
-          : "SAVE HOMEPAGE ↗"}
-      </button>
+              <label className="cms-field">
+                Base body size: {homeSettings.global_body_size || 14}px
+                <input
+                  type="range"
+                  min="12"
+                  max="22"
+                  value={homeSettings.global_body_size || 14}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      global_body_size: Number(e.target.value)
+                    }))
+                  }
+                />
+              </label>
 
-      {homeMessage && (
-        <p className="cms-editor-message">{homeMessage}</p>
-      )}
-    </div>
-  </section>
-)}
+              <button
+                className="cms-save-button"
+                onClick={saveHomeSettings}
+                disabled={homeSaving}
+              >
+                {homeSaving ? "SAVING..." : "SAVE TYPOGRAPHY"}
+              </button>
 
-{activeTab === "Typography" && (
-  <section className="cms-content">
-    <div className="cms-editor-heading"><div><p className="cms-eyebrow">DESIGN SYSTEM</p><h2>Typography settings.</h2><p>Set the site-wide heading and body fonts.</p></div></div>
-    <div className="cms-edit-panel">
-      <label className="cms-field">Heading font<select value={homeSettings.global_heading_font || "Manrope"} onChange={e => setHomeSettings(p => ({...p,global_heading_font:e.target.value}))}>{["Manrope","DM Sans","Arial","Georgia","Playfair Display"].map(x => <option key={x}>{x}</option>)}</select></label>
-      <label className="cms-field">Body font<select value={homeSettings.global_body_font || "DM Sans"} onChange={e => setHomeSettings(p => ({...p,global_body_font:e.target.value}))}>{["DM Sans","Manrope","Arial","Georgia","Playfair Display"].map(x => <option key={x}>{x}</option>)}</select></label>
-      <label className="cms-field">Base body size: {homeSettings.global_body_size || 14}px<input type="range" min="12" max="22" value={homeSettings.global_body_size || 14} onChange={e => setHomeSettings(p => ({...p,global_body_size:Number(e.target.value)}))}/></label>
-      <button className="cms-save-button" onClick={saveHomeSettings} disabled={homeSaving}>{homeSaving ? "SAVING..." : "SAVE TYPOGRAPHY"}</button>
-      {homeMessage && <p className="cms-editor-message">{homeMessage}</p>}
-    </div>
-  </section>
-)}
+              {homeMessage && (
+                <p className="cms-editor-message">{homeMessage}</p>
+              )}
+            </div>
+          </section>
+        )}
 
-{activeTab === "Image Editor" && (
-  <section className="cms-content">
-    <div className="cms-editor-heading"><div><p className="cms-eyebrow">VISUAL CONTENT</p><h2>Edit section images.</h2><p>Change the image and alt text for each homepage section.</p></div></div>
-    <div className="cms-edit-panel">
-      {(homeSettings.section_content || sections).map((item, index) => <div className="cms-image-editor-row" key={item.id || index}>
-        <div className="cms-list-heading"><strong>{item.title || `Section ${index+1}`}</strong><span>{String(index+1).padStart(2,"0")}</span></div>
-        <label className="cms-field">Image URL<input type="url" value={item.image || ""} onChange={e => updateSection(index,"image",e.target.value)} /></label>
-        <label className="cms-field">Alt text<input value={item.alt || ""} onChange={e => updateSection(index,"alt",e.target.value)} /></label>
-        {item.image && <img className="cms-image-preview" src={item.image} alt={item.alt || "Section preview"}/ >}
-      </div>)}
-      <button className="cms-save-button" onClick={saveHomeSettings} disabled={homeSaving}>{homeSaving ? "SAVING..." : "SAVE IMAGES"}</button>
-      {homeMessage && <p className="cms-editor-message">{homeMessage}</p>}
-    </div>
-  </section>
-)}
+        {activeTab === "Image Editor" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">VISUAL CONTENT</p>
+                <h2>Edit section images.</h2>
+                <p>Change the image and alt text for each homepage section.</p>
+              </div>
+            </div>
 
-{activeTab === "Media Library" && (
-  <section className="cms-content">
-    <div className="cms-editor-heading"><div><p className="cms-eyebrow">SUPABASE STORAGE / SITE-MEDIA</p><h2>Your media library.</h2><p>Upload, preview, copy public URLs and delete stored files.</p></div></div>
-    <div className="cms-edit-panel">
-      <label className="cms-upload-label">{mediaUploading ? "UPLOADING..." : "+ UPLOAD FILES"}<input type="file" multiple accept="image/*,video/*" onChange={uploadMedia} disabled={mediaUploading}/></label>
-      <button type="button" className="cms-secondary-button" onClick={loadMedia} disabled={mediaLoading}>{mediaLoading ? "REFRESHING..." : "REFRESH LIBRARY"}</button>
-      {mediaMessage && <p className="cms-editor-message">{mediaMessage}</p>}
-      {mediaLoading ? <p className="cms-editor-note">Loading files...</p> : mediaFiles.length === 0 ? <p className="cms-editor-note">No files found in site-media.</p> : <div className="cms-media-grid">{mediaFiles.map(file => {
-        const url = getMediaUrl(file.name);
-        const isImage = /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(file.name);
-        return <article className="cms-media-card" key={file.id || file.name}>
-          {isImage ? <img src={url} alt={file.name}/> : <div className="cms-media-file">FILE</div>}
-          <strong title={file.name}>{file.name}</strong>
-          <small>{file.metadata?.size ? `${Math.round(file.metadata.size/1024)} KB` : "Stored file"}</small>
-          <button type="button" onClick={() => { navigator.clipboard?.writeText(url); setMediaMessage("Public URL copied."); }}>COPY URL</button>
-          <button type="button" className="cms-delete-button" onClick={() => deleteMedia(file.name)}>DELETE</button>
-        </article>;
-      })}</div>}
-    </div>
-  </section>
-)}
+            <div className="cms-edit-panel">
+              {(homeSettings.section_content || sections).map((item, index) => (
+                <div
+                  className="cms-image-editor-row"
+                  key={item.id || index}
+                >
+                  <div className="cms-list-heading">
+                    <strong>{item.title || `Section ${index + 1}`}</strong>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                  </div>
 
-{activeTab === "Messages" && (
-  <section className="cms-content">
-    <div className="cms-editor-heading"><div><p className="cms-eyebrow">CONTACT INBOX</p><h2>Website messages.</h2><p>Messages submitted through your contact form.</p></div><button className="cms-secondary-button" onClick={loadMessages}>REFRESH</button></div>
-    {messagesStatus && <p className="cms-editor-message">{messagesStatus}</p>}
-    {messagesLoading ? <p className="cms-editor-note">Loading messages...</p> : contactMessages.length === 0 ? <p className="cms-editor-note">No messages found.</p> : <div className="cms-message-list">{contactMessages.map(message => <article className="cms-message-card" key={message.id}>
-      <div className="cms-list-heading"><strong>{message.name || "No name"}</strong><span>{message.created_at ? new Date(message.created_at).toLocaleString() : ""}</span></div>
-      <p><a href={`mailto:${message.email}`}>{message.email}</a></p><p>{message.message}</p>
-      <button className="cms-delete-button" onClick={() => deleteMessage(message.id)}>DELETE MESSAGE</button>
-    </article>)}</div>}
-  </section>
-)}
+                  <label className="cms-field">
+                    Image URL
+                    <input
+                      type="url"
+                      value={item.image || ""}
+                      onChange={(e) =>
+                        updateSection(index, "image", e.target.value)
+                      }
+                    />
+                  </label>
 
-{activeTab === "Settings" && (
-  <section className="cms-content">
-    <div className="cms-editor-heading"><div><p className="cms-eyebrow">SITE CONFIGURATION</p><h2>Website settings.</h2><p>Manage the site identity and footer text.</p></div></div>
-    <div className="cms-edit-panel">
-      <label className="cms-field">Website name<input value={homeSettings.site_name || "AL MUBIN"} onChange={e => setHomeSettings(p => ({...p,site_name:e.target.value}))}/></label>
-      <label className="cms-field">Browser title<input value={homeSettings.site_title || "AL MUBIN — Personal Digital World"} onChange={e => setHomeSettings(p => ({...p,site_title:e.target.value}))}/></label>
-      <label className="cms-field">Footer tagline<input value={homeSettings.footer_tagline || "MADE OF MOMENTS & MEANING."} onChange={e => setHomeSettings(p => ({...p,footer_tagline:e.target.value}))}/></label>
-      <label className="cms-field">Contact email<input type="email" value={homeSettings.contact_email || ""} onChange={e => setHomeSettings(p => ({...p,contact_email:e.target.value}))} placeholder="hello@example.com"/></label>
-      <button className="cms-save-button" onClick={saveHomeSettings} disabled={homeSaving}>{homeSaving ? "SAVING..." : "SAVE SETTINGS"}</button>
-      {homeMessage && <p className="cms-editor-message">{homeMessage}</p>}
-    </div>
-  </section>
-)}
+                  <label className="cms-field">
+                    Alt text
+                    <input
+                      value={item.alt || ""}
+                      onChange={(e) =>
+                        updateSection(index, "alt", e.target.value)
+                      }
+                    />
+                  </label>
 
+                  {item.image && (
+                    <img
+                      className="cms-image-preview"
+                      src={item.image}
+                      alt={item.alt || "Section preview"}
+                    />
+                  )}
+                </div>
+              ))}
+
+              <button
+                className="cms-save-button"
+                onClick={saveHomeSettings}
+                disabled={homeSaving}
+              >
+                {homeSaving ? "SAVING..." : "SAVE IMAGES"}
+              </button>
+
+              {homeMessage && (
+                <p className="cms-editor-message">{homeMessage}</p>
+              )}
+            </div>
+          </section>
+        )}
+
+        {activeTab === "Media Library" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">SUPABASE STORAGE / SITE-MEDIA</p>
+                <h2>Your media library.</h2>
+                <p>Upload, preview, copy public URLs and delete stored files.</p>
+              </div>
+            </div>
+
+            <div className="cms-edit-panel">
+              <label className="cms-upload-label">
+                {mediaUploading ? "UPLOADING..." : "+ UPLOAD FILES"}
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,video/*"
+                  onChange={uploadMedia}
+                  disabled={mediaUploading}
+                />
+              </label>
+
+              <button
+                type="button"
+                className="cms-secondary-button"
+                onClick={loadMedia}
+                disabled={mediaLoading}
+              >
+                {mediaLoading ? "REFRESHING..." : "REFRESH LIBRARY"}
+              </button>
+
+              {mediaMessage && (
+                <p className="cms-editor-message">{mediaMessage}</p>
+              )}
+
+              {mediaLoading ? (
+                <p className="cms-editor-note">Loading files...</p>
+              ) : mediaFiles.length === 0 ? (
+                <p className="cms-editor-note">
+                  No files found in site-media.
+                </p>
+              ) : (
+                <div className="cms-media-grid">
+                  {mediaFiles.map((file) => {
+                    const url = getMediaUrl(file.name);
+                    const isImage =
+                      /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(file.name);
+
+                    return (
+                      <article
+                        className="cms-media-card"
+                        key={file.id || file.name}
+                      >
+                        {isImage ? (
+                          <img src={url} alt={file.name} />
+                        ) : (
+                          <div className="cms-media-file">FILE</div>
+                        )}
+
+                        <strong title={file.name}>{file.name}</strong>
+
+                        <small>
+                          {file.metadata?.size
+                            ? `${Math.round(file.metadata.size / 1024)} KB`
+                            : "Stored file"}
+                        </small>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard?.writeText(url);
+                            setMediaMessage("Public URL copied.");
+                          }}
+                        >
+                          COPY URL
+                        </button>
+
+                        <button
+                          type="button"
+                          className="cms-delete-button"
+                          onClick={() => deleteMedia(file.name)}
+                        >
+                          DELETE
+                        </button>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {activeTab === "Messages" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">CONTACT INBOX</p>
+                <h2>Website messages.</h2>
+                <p>Messages submitted through your contact form.</p>
+              </div>
+
+              <button
+                className="cms-secondary-button"
+                onClick={loadMessages}
+              >
+                REFRESH
+              </button>
+            </div>
+
+            {messagesStatus && (
+              <p className="cms-editor-message">{messagesStatus}</p>
+            )}
+
+            {messagesLoading ? (
+              <p className="cms-editor-note">Loading messages...</p>
+            ) : contactMessages.length === 0 ? (
+              <p className="cms-editor-note">No messages found.</p>
+            ) : (
+              <div className="cms-message-list">
+                {contactMessages.map((message) => (
+                  <article
+                    className="cms-message-card"
+                    key={message.id}
+                  >
+                    <div className="cms-list-heading">
+                      <strong>{message.name || "No name"}</strong>
+                      <span>
+                        {message.created_at
+                          ? new Date(message.created_at).toLocaleString()
+                          : ""}
+                      </span>
+                    </div>
+
+                    <p>
+                      <a href={`mailto:${message.email}`}>
+                        {message.email}
+                      </a>
+                    </p>
+
+                    <p>{message.message}</p>
+
+                    <button
+                      className="cms-delete-button"
+                      onClick={() => deleteMessage(message.id)}
+                    >
+                      DELETE MESSAGE
+                    </button>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {activeTab === "Settings" && (
+          <section className="cms-content">
+            <div className="cms-editor-heading">
+              <div>
+                <p className="cms-eyebrow">SITE CONFIGURATION</p>
+                <h2>Website settings.</h2>
+                <p>Manage the site identity and footer text.</p>
+              </div>
+            </div>
+
+            <div className="cms-edit-panel">
+              <label className="cms-field">
+                Website name
+                <input
+                  value={homeSettings.site_name || "AL MUBIN"}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      site_name: e.target.value
+                    }))
+                  }
+                />
+              </label>
+
+              <label className="cms-field">
+                Browser title
+                <input
+                  value={homeSettings.site_title || "AL MUBIN — Personal Digital World"}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      site_title: e.target.value
+                    }))
+                  }
+                />
+              </label>
+
+              <label className="cms-field">
+                Footer tagline
+                <input
+                  value={homeSettings.footer_tagline || "MADE OF MOMENTS & MEANING."}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      footer_tagline: e.target.value
+                    }))
+                  }
+                />
+              </label>
+
+              <label className="cms-field">
+                Contact email
+                <input
+                  type="email"
+                  value={homeSettings.contact_email || ""}
+                  onChange={(e) =>
+                    setHomeSettings((p) => ({
+                      ...p,
+                      contact_email: e.target.value
+                    }))
+                  }
+                  placeholder="hello@example.com"
+                />
+              </label>
+
+              <button
+                className="cms-save-button"
+                onClick={saveHomeSettings}
+                disabled={homeSaving}
+              >
+                {homeSaving ? "SAVING..." : "SAVE SETTINGS"}
+              </button>
+
+              {homeMessage && (
+                <p className="cms-editor-message">{homeMessage}</p>
+              )}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
@@ -1412,13 +2223,26 @@ export default function App() {
 
   useEffect(() => {
     let active = true;
+
     async function loadSiteConfig() {
       if (!supabase) return;
-      const { data } = await supabase.from("site_settings").select("header").eq("id", 1).single();
-      if (active && data?.header) setSiteConfig(data.header);
+
+      const { data } = await supabase
+        .from("site_settings")
+        .select("header")
+        .eq("id", 1)
+        .single();
+
+      if (active && data?.header) {
+        setSiteConfig(data.header);
+      }
     }
+
     loadSiteConfig();
-    return () => { active = false; };
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   function navigate(next) {
@@ -1442,7 +2266,9 @@ export default function App() {
     let active = true;
 
     supabase.auth.getSession().then(({ data }) => {
-      if (active) setAdminSession(data.session);
+      if (active) {
+        setAdminSession(data.session);
+      }
     });
 
     const {
@@ -1542,7 +2368,10 @@ export default function App() {
       ) : page === "home" ? (
         <Home navigate={navigate} />
       ) : page === "contact" ? (
-        <ContactPage navigate={navigate} contactEmail={siteConfig.contact_email || ""} />
+        <ContactPage
+          navigate={navigate}
+          contactEmail={siteConfig.contact_email || ""}
+        />
       ) : (
         <DetailPage page={page} navigate={navigate} />
       )}
@@ -1560,7 +2389,9 @@ export default function App() {
         </a>
 
         <span>© {new Date().getFullYear()} AL MUBIN</span>
-        <span>{siteConfig.footer_tagline || "MADE OF MOMENTS & MEANING."}</span>
+        <span>
+          {siteConfig.footer_tagline || "MADE OF MOMENTS & MEANING."}
+        </span>
 
         <button
           onClick={() =>
@@ -1573,3 +2404,9 @@ export default function App() {
     </>
   );
 }
+
+
+
+
+
+
