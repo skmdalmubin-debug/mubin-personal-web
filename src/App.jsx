@@ -44,16 +44,36 @@ function SectionPreview({ item, index, navigate }) {
   </section>;
 }
 
-
 function Home({ navigate }) {
   const [settings, setSettings] = useState({
     hero_title: "AL MUBIN",
-    hero_subtitle:
-      "A collection of places, passions, memories and moments that shape my journey.",
+    hero_subtitle: "SIUUU",
+    hero_eyebrow: "WELCOME TO THE WORLD",
+
     hero_image:
       "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
+
+    eyebrow_size: 14,
+    eyebrow_color: "#ffffff",
+    eyebrow_font: "DM Sans",
+    eyebrow_x: 8,
+    eyebrow_y: 30,
+
+    title_size: 150,
+    title_color: "#ffffff",
+    title_font: "Manrope",
+    title_x: 8,
+    title_y: 45,
+
+    subtitle_size: 24,
+    subtitle_color: "#ffffff",
+    subtitle_font: "DM Sans",
+    subtitle_x: 8,
+    subtitle_y: 70,
+
     intro_heading:
       "Not just a website.\nA little world of my own.",
+
     intro_description:
       "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
   });
@@ -101,50 +121,47 @@ function Home({ navigate }) {
 
           <div className="hero-title-wrap">
             <p
-  className="eyebrow"
-  style={{
-    fontFamily: settings.eyebrow_font || "DM Sans",
-    fontSize: `${settings.eyebrow_size || 14}px`,
-    color: settings.eyebrow_color || "#ffffff",
-    position: "absolute",
-    left: `${settings.eyebrow_x || 8}%`,
-    top: `${settings.eyebrow_y || 30}%`
-  }}
->
-  {settings.hero_eyebrow || "WELCOME TO THE WORLD"}
-</p>
-            
-            <div className="hero-bottom">
-              <p
-  style={{
-    whiteSpace: "pre-line",
-    fontFamily: settings.subtitle_font || "DM Sans",
-    fontSize: `${settings.subtitle_size || 24}px`,
-    color: settings.subtitle_color || "#ffffff",
-    position: "absolute",
-    left: `${settings.subtitle_x || 8}%`,
-    top: `${settings.subtitle_y || 70}%`
-  }}
->
-  {settings.hero_subtitle || "SIUUU"}
-</p>
-              <h1
-  style={{
-    fontFamily: settings.title_font || "Manrope",
-    fontSize: `clamp(60px, ${settings.title_size || 150}px, 210px)`,
-    color: settings.title_color || "#ffffff",
-    position: "absolute",
-    left: `${settings.title_x || 8}%`,
-    top: `${settings.title_y || 45}%`
-  }}
->
-  {settings.hero_title}<span>.</span>
-</h1>
+              className="eyebrow"
+              style={{
+                fontFamily: settings.eyebrow_font ?? "DM Sans",
+                fontSize: `${settings.eyebrow_size ?? 14}px`,
+                color: settings.eyebrow_color ?? "#ffffff",
+                position: "absolute",
+                left: `${settings.eyebrow_x ?? 8}%`,
+                top: `${settings.eyebrow_y ?? 30}%`
+              }}
+            >
+              {settings.hero_eyebrow ?? "WELCOME TO THE WORLD"}
+            </p>
 
-        
-            </div>
+            <h1
+              style={{
+                fontFamily: settings.title_font ?? "Manrope",
+                fontSize: `clamp(60px, ${settings.title_size ?? 150}px, 210px)`,
+                color: settings.title_color ?? "#ffffff",
+                position: "absolute",
+                left: `${settings.title_x ?? 8}%`,
+                top: `${settings.title_y ?? 45}%`
+              }}
+            >
+              {settings.hero_title}
+              <span>.</span>
+            </h1>
+
+            <p
+              style={{
+                whiteSpace: "pre-line",
+                fontFamily: settings.subtitle_font ?? "DM Sans",
+                fontSize: `${settings.subtitle_size ?? 24}px`,
+                color: settings.subtitle_color ?? "#ffffff",
+                position: "absolute",
+                left: `${settings.subtitle_x ?? 8}%`,
+                top: `${settings.subtitle_y ?? 70}%`
+              }}
+            >
+              {settings.hero_subtitle ?? "SIUUU"}
+            </p>
           </div>
-
         </div>
       </section>
 
@@ -178,7 +195,9 @@ function Home({ navigate }) {
         <p className="eyebrow">HAVE SOMETHING TO SAY?</p>
 
         <div className="contact-row">
-          <h2>Let's connect<span>.</span></h2>
+          <h2>
+            Let's connect<span>.</span>
+          </h2>
 
           <button
             className="round-arrow"
@@ -196,6 +215,8 @@ function Home({ navigate }) {
     </main>
   );
 }
+
+
 
 
 function DetailPage({ page, navigate }) {
