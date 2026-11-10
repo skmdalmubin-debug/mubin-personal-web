@@ -728,8 +728,9 @@
   }
 
   .hero-title-wrap .eyebrow {
-    font-size: clamp(8px, 2.2vw, 12px) !important;
-    max-width: 90%;
+    font-size: clamp(7px, 1.8vw, 10px) !important;
+    max-width: none;
+    white-space: nowrap;
   }
 
   .hero-title-wrap h1 {
