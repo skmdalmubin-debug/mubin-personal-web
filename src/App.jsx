@@ -525,10 +525,33 @@ function AdminDashboard({ onLogout }) {
   const [editorMessage, setEditorMessage] = useState("");
 const [homeSettings, setHomeSettings] = useState({
   hero_title: "AL MUBIN",
-  hero_subtitle: "A collection of places, passions, memories and moments that shape my journey.",
-  hero_image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
+  hero_subtitle: "SIUUU",
+  hero_eyebrow: "WELCOME TO THE WORLD",
+
+  hero_image:
+    "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
+
+  eyebrow_size: 14,
+  eyebrow_color: "#ffffff",
+  eyebrow_font: "DM Sans",
+  eyebrow_x: 8,
+  eyebrow_y: 30,
+
+  title_size: 150,
+  title_color: "#ffffff",
+  title_font: "Manrope",
+  title_x: 8,
+  title_y: 45,
+
+  subtitle_size: 24,
+  subtitle_color: "#ffffff",
+  subtitle_font: "DM Sans",
+  subtitle_x: 8,
+  subtitle_y: 70,
+
   intro_heading: "Not just a website. A little world of my own.",
-  intro_description: "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
+  intro_description:
+    "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
 });
   const updateHomeSetting = (key, value) => {
   setHomeSettings((prev) => ({
