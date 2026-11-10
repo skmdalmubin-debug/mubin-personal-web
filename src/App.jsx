@@ -415,16 +415,81 @@ function AdminDashboard({ onLogout }) {
   const [loadingPages, setLoadingPages] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editorMessage, setEditorMessage] = useState("");
+const [homeSettings, setHomeSettings] = useState({
+  hero_title: "AL MUBIN",
+  hero_subtitle: "A collection of places, passions, memories and moments that shape my journey.",
+  hero_image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2200&q=90",
+  intro_heading: "Not just a website. A little world of my own.",
+  intro_description: "This is where I bring together the things I experience, the things I collect, the places I discover and the thoughts I want to keep. Take a look around."
+});
 
-  const menuItems = [
-    { name: "Overview", icon: "⌂" },
-    { name: "Page Editor", icon: "▤" },
-    { name: "Typography", icon: "T" },
-    { name: "Image Editor", icon: "▧" },
-    { name: "Media Library", icon: "▦" },
-    { name: "Settings", icon: "⚙" }
-  ];
+const [homeLoading, setHomeLoading] = useState(false);
+const [homeSaving, setHomeSaving] = useState(false);
+const [homeMessage, setHomeMessage] = useState("");
 
+
+ const menuItems = [
+  { name: "Overview", icon: "⌂" },
+  { name: "Page Editor", icon: "▤" },
+  { name: "Home Page Editor", icon: "⌂" },
+  { name: "Typography", icon: "T" },
+  { name: "Image Editor", icon: "▧" },
+  { name: "Media Library", icon: "▦" },
+  { name: "Settings", icon: "⚙" }
+];
+
+ async function loadHomeSettings() {
+  if (!supabase) {
+    setHomeMessage("Supabase connection is not configured.");
+    return;
+  }
+
+  setHomeLoading(true);
+  setHomeMessage("");
+
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("header")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    setHomeMessage(error.message);
+  } else if (data && data.header) {
+    setHomeSettings((previous) => ({
+      ...previous,
+      ...data.header
+    }));
+  }
+
+  setHomeLoading(false);
+}
+
+  async function saveHomeSettings() {
+  if (!supabase) {
+    setHomeMessage("Supabase connection is not configured.");
+    return;
+  }
+
+  setHomeSaving(true);
+  setHomeMessage("");
+
+  const { error } = await supabase
+    .from("site_settings")
+    .update({
+      header: homeSettings
+    })
+    .eq("id", 1);
+
+  setHomeSaving(false);
+
+  if (error) {
+    setHomeMessage(error.message);
+    return;
+  }
+
+  setHomeMessage("Home page settings saved successfully.");
+}
   async function loadPages() {
     if (!supabase) {
       setEditorMessage("Supabase connection is not configured.");
@@ -449,11 +514,15 @@ function AdminDashboard({ onLogout }) {
     setPages(data || []);
   }
 
-  useEffect(() => {
-    if (activeTab === "Page Editor") {
-      loadPages();
-    }
-  }, [activeTab]);
+ useEffect(() => {
+  if (activeTab === "Page Editor") {
+    loadPages();
+  }
+
+  if (activeTab === "Home Page Editor") {
+    loadHomeSettings();
+  }
+}, [activeTab]);
 
   function selectPage(page) {
     setSelectedPage(page);
@@ -754,15 +823,123 @@ function AdminDashboard({ onLogout }) {
           </section>
         )}
 
-        {!["Overview", "Page Editor"].includes(activeTab) && (
-          <section className="cms-content">
-            <div className="cms-placeholder">
-              <p className="cms-eyebrow">WORKSPACE</p>
-              <h2>{activeTab}</h2>
-              <p>This workspace will be built in the next step.</p>
-            </div>
-          </section>
-        )}
+{activeTab === "Home Page Editor" && (
+  <section className="cms-content">
+    <div className="cms-editor-heading">
+      <div>
+        <p className="cms-eyebrow">HOMEPAGE MANAGEMENT</p>
+        <h2>Edit your homepage.</h2>
+        <p>Manage your hero and introduction section.</p>
+      </div>
+    </div>
+
+    <div className="cms-edit-panel">
+      <div className="cms-list-heading">
+        <strong>Hero Section</strong>
+        <span>01</span>
+      </div>
+
+      <label className="cms-field">
+        Hero Title
+        <input
+          value={homeSettings.hero_title}
+          onChange={(e) =>
+            setHomeSettings((prev) => ({
+              ...prev,
+              hero_title: e.target.value
+            }))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Hero Subtitle
+        <textarea
+          rows={3}
+          value={homeSettings.hero_subtitle}
+          onChange={(e) =>
+            setHomeSettings((prev) => ({
+              ...prev,
+              hero_subtitle: e.target.value
+            }))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Hero Image URL
+        <input
+          value={homeSettings.hero_image}
+          onChange={(e) =>
+            setHomeSettings((prev) => ({
+              ...prev,
+              hero_image: e.target.value
+            }))
+          }
+        />
+      </label>
+
+      <div className="cms-list-heading">
+        <strong>Introduction Section</strong>
+        <span>02</span>
+      </div>
+
+      <label className="cms-field">
+        Intro Heading
+        <textarea
+          rows={2}
+          value={homeSettings.intro_heading}
+          onChange={(e) =>
+            setHomeSettings((prev) => ({
+              ...prev,
+              intro_heading: e.target.value
+            }))
+          }
+        />
+      </label>
+
+      <label className="cms-field">
+        Intro Description
+        <textarea
+          rows={4}
+          value={homeSettings.intro_description}
+          onChange={(e) =>
+            setHomeSettings((prev) => ({
+              ...prev,
+              intro_description: e.target.value
+            }))
+          }
+        />
+      </label>
+
+      <button
+        className="cms-save-button"
+        onClick={saveHomeSettings}
+        disabled={homeSaving || homeLoading}
+      >
+        {homeLoading
+          ? "LOADING..."
+          : homeSaving
+          ? "SAVING..."
+          : "SAVE HOMEPAGE ↗"}
+      </button>
+
+      {homeMessage && (
+        <p className="cms-editor-message">{homeMessage}</p>
+      )}
+    </div>
+  </section>
+)}
+
+{!["Overview", "Page Editor", "Home Page Editor"].includes(activeTab) && (
+  <section className="cms-content">
+    <div className="cms-placeholder">
+      <p className="cms-eyebrow">WORKSPACE</p>
+      <h2>{activeTab}</h2>
+      <p>This workspace will be built in the next step.</p>
+    </div>
+  </section>
+)}
       </main>
     </div>
   );
